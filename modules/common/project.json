@@ -1,0 +1,23 @@
+{
+  "name": "common",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/common/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/common",
+        "main": "modules/common/src/index.ts",
+        "tsConfig": "modules/common/tsconfig.lib.json",
+        "assets": ["modules/common/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs common {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}

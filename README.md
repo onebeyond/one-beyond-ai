@@ -61,3 +61,7 @@ It will show tasks that you can run with Nx.
 - [Join the community](https://nx.dev/community)
 - [Subscribe to the Nx Youtube Channel](https://www.youtube.com/@nxdevtools)
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
+
+
+## Create new module
+nx g @nx/js:lib common --buildable=true --publishable=true --importPath=@one-beyond-ai/common --directory=modules
