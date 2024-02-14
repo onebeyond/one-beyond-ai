@@ -51,6 +51,7 @@ Nx comes with local caching already built-in (check your `nx.json`). On CI you m
 - [Learn more how to setup CI](https://nx.dev/recipes/ci)
 
 ## Explore the Project Graph
+
 Run `nx graph` to show the graph of the workspace.
 It will show tasks that you can run with Nx.
 
@@ -62,6 +63,7 @@ It will show tasks that you can run with Nx.
 - [Subscribe to the Nx Youtube Channel](https://www.youtube.com/@nxdevtools)
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
 
-
 ## Create new module
+```bash
 nx g @nx/js:lib common --buildable=true --publishable=true --importPath=@one-beyond-ai/common --directory=modules
+```

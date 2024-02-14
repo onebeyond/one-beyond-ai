@@ -1,4 +1,4 @@
-import { LoggerClient, LogLevel } from "../types";
+import { LoggerClient, LogLevel } from '../types';
 
 class Logger {
   public client: LoggerClient;
@@ -16,27 +16,27 @@ class Logger {
     this.logLevel = level;
   }
 
-  public error(message: string) {
+  public error(...messages: any[]) {
     if (this.logLevel >= LogLevel.ERROR) {
-      this.client.error(message);
+      this.client.error(...messages);
     }
   }
 
-  public warn(message: string) {
+  public warn(...messages: any[]) {
     if (this.logLevel >= LogLevel.WARN) {
-      this.client.warn(message);
+      this.client.warn(...messages);
     }
   }
 
-  public info(message: string) {
+  public info(...messages: any[]) {
     if (this.logLevel >= LogLevel.INFO) {
-      this.client.info(message);
+      this.client.info(...messages);
     }
   }
 
-  public debug(message: string) {
+  public debug(...messages: any[]) {
     if (this.logLevel >= LogLevel.DEBUG) {
-      this.client.debug(message);
+      this.client.debug(...messages);
     }
   }
 }
