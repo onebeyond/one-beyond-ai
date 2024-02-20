@@ -1,0 +1,19 @@
+{
+  "name": "text-extractor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/text-extractor/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/text-extractor",
+        "main": "modules/text-extractor/src/index.ts",
+        "tsConfig": "modules/text-extractor/tsconfig.lib.json",
+        "assets": ["modules/text-extractor/*.md"]
+      }
+    }
+  },
+  "tags": []
+}
