@@ -1,7 +1,9 @@
-import { textExtractor } from './text-extractor';
+import {TextExtractor} from './text-extractor';
+
+const textExtractor = new TextExtractor();
 
 describe('textExtractor', () => {
   it('should work', () => {
-    expect(textExtractor()).toEqual('text-extractor');
+    expect(textExtractor.forTest()).toEqual('text-extractor');
   });
 });

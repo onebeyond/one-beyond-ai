@@ -1,3 +1,6 @@
-export function textExtractor(): string {
-  return 'text-extractor';
+
+export class TextExtractor {
+  public forTest(): string {
+    return 'text-extractor';
+  }
 }
