@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@one-beyond-ai/common": ["modules/common/src/index.ts"],
+      "@one-beyond-ai/mime-type": ["modules/mime-type/src/index.ts"],
       "@one-beyond-ai/text-extractor": ["modules/text-extractor/src/index.ts"]
     }
   },
