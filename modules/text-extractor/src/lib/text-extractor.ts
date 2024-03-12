@@ -1,8 +1,5 @@
-import { getMIMEType } from 'node-mime-types';
-
 export class TextExtractor {
+  constructor() {
 
-  public forTest(): string {
-    return 'text-extractor';
   }
 }

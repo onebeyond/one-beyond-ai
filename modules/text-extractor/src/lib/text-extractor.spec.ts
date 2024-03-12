@@ -2,8 +2,8 @@ import {TextExtractor} from './text-extractor';
 
 const textExtractor = new TextExtractor();
 
-describe('textExtractor', () => {
+describe('TextExtractor', () => {
   it('should work', () => {
-    expect(textExtractor.forTest()).toEqual('text-extractor');
+    
   });
 });
