@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -18,7 +18,9 @@
       "@one-beyond-ai/common": ["modules/common/src/index.ts"],
       "@one-beyond-ai/mime-type": ["modules/mime-type/src/index.ts"],
       "@one-beyond-ai/text-extractor": ["modules/text-extractor/src/index.ts"]
-    }
+    },
+    "allowJs": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
+  "include": []
 }
