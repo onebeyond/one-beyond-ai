@@ -1,0 +1,19 @@
+{
+  "name": "text-document-extractor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/text-document-extractor/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/text-document-extractor",
+        "main": "modules/text-document-extractor/src/index.ts",
+        "tsConfig": "modules/text-document-extractor/tsconfig.lib.json",
+        "assets": ["modules/text-document-extractor/*.md"]
+      }
+    }
+  },
+  "tags": []
+}

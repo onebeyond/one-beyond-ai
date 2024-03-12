@@ -1,0 +1,11 @@
+{
+  "name": "@one-beyond-ai/text-document-extractor",
+  "version": "0.0.1",
+  "dependencies": {
+    "langchain": "^0.1.26",
+    "pdf-parse": "^1.1.1"
+  },
+  "main": "./index.js",
+  "module": "./index.mjs",
+  "typings": "./index.d.ts"
+}
