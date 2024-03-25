@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "langchain": "^0.1.26",
+    "mammoth": "^1.7.0",
     "pdf-parse": "^1.1.1"
   },
   "main": "./index.js",

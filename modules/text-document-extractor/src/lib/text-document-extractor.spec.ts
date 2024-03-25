@@ -9,4 +9,9 @@ describe('TextExtractor', () => {
     const extracted = await textExtractor.extractText(absoultePath);
     expect(extracted).toBe('PDF text');
   });
+  it.only('should extract text properly from docx document', async () => {
+    const absoultePath = require('path').resolve(__dirname, '../../test-files/test.docx');
+    const extracted = await textExtractor.extractText(absoultePath);
+    expect(extracted).toBe('Docx text');
+  });
 });

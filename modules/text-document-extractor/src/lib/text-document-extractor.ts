@@ -1,5 +1,6 @@
 import { MimeType } from "@one-beyond-ai/mime-type";
 import { PDFExtractor } from "./pdf-extractor";
+import { DocxExtractor } from "./docx-extractor";
 
 export class TextExtractor {
   constructor(private mimeType: MimeType) {}
@@ -10,7 +11,8 @@ export class TextExtractor {
       return extracted;
     }
     if (mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      return "DOCX text";
+      const extracted = await new DocxExtractor().extractText(filePath) as any;
+      return extracted;
     }
     if (mimeType === "application/x-iwork-pages-sffpages") {
       return "PAGES text";
