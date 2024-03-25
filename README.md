@@ -65,5 +65,5 @@ It will show tasks that you can run with Nx.
 
 ## Create new module
 ```bash
-nx g @nx/js:lib common --buildable=true --publishable=true --importPath=@one-beyond-ai/common --directory=modules
+nx g @nx/js:lib common --buildable=true --publishable=true --importPath=@one-beyond-ai/common
 ```

@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@one-beyond-ai/azure-openai": ["modules/azure-openai/src/index.ts"],
       "@one-beyond-ai/common": ["modules/common/src/index.ts"],
       "@one-beyond-ai/mime-type": ["modules/mime-type/src/index.ts"],
       "@one-beyond-ai/text-document-extractor": ["modules/text-document-extractor/src/index.ts"]
