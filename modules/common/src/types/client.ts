@@ -1,4 +1,5 @@
-import { ChatCompletion, ChatRequestMessage } from "./completion";
+import { ChatCompletion, ChatCompletionOptions, ChatRequestMessage } from "./completion";
+import { EmbeddingOptions } from "./embedding";
 
 export type ModelParams = {
   tokenCost: number;
@@ -25,7 +26,7 @@ export interface AIClient {
 
   getClient(): unknown;
 
-  getChatCompletion(messages: ChatRequestMessage[]): Promise<ChatCompletion>;
+  getChatCompletion(messages: ChatRequestMessage[], options?: ChatCompletionOptions): Promise<ChatCompletion>;
 
-  getEmbeddings(text: string[]): unknown;
+  getEmbeddings(input: string[], options?: EmbeddingOptions): unknown;
 }
