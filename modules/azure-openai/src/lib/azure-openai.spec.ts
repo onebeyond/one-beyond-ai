@@ -1,7 +1,7 @@
 import { AzureKeyCredential, ChatCompletions, Embeddings, OpenAIClient as openAIClient } from "@azure/openai";
 import { AzureOpenAIClient } from "./azure-openai";
 import { AzureOpenAIClientParams, ChatRequestMessage } from "@one-beyond-ai/common";
-import { describe, MockedClass } from "vitest";
+import { MockedClass } from "vitest";
 
 vi.mock('@azure/openai');
 const OpenAIClient: MockedClass<typeof openAIClient> = openAIClient as MockedClass<typeof openAIClient>;
@@ -13,7 +13,7 @@ const clientOptions: AzureOpenAIClientParams = {
   version: "2024-02-15-preview",
   completionCost: 0,
   tokenCost: 0,
-  contextSize: 32,
+  contextSize: 32768,
 };
 
 describe('Azure OpenAI Client', () => {
@@ -24,10 +24,9 @@ describe('Azure OpenAI Client', () => {
     it("should create an instance of AzureOpenAIClient", () => {
       const client = new AzureOpenAIClient(clientOptions);
       expect(client).toBeDefined();
-      const endpoint = OpenAIClient.mock.calls[0][0];
-      const version = OpenAIClient.mock.calls[0][2];
-      expect(endpoint).toEqual(clientOptions.endpoint);
-      expect(version).toEqual({ apiVersion: clientOptions.version });
+      const params = OpenAIClient.mock.calls[0] as any;
+      expect(params[0]).toEqual(clientOptions.endpoint);
+      expect(params[2]).toEqual({ apiVersion: clientOptions.version });
       expect(AzureKeyCredential).toHaveBeenCalledWith(clientOptions.apiKey);
     });
   });

@@ -24,7 +24,7 @@ export class AzureOpenAIClient implements AIClient {
     return this.client;
   }
 
-  public async getChatCompletion(messages: Array<ChatRequestMessage>, options?: ChatCompletionOptions): Promise<ChatCompletion> {
+  public async getChatCompletion(messages: ChatRequestMessage[], options?: ChatCompletionOptions): Promise<ChatCompletion> {
     const result = await this.client.getChatCompletions(this.options.deploymentName, messages, mapChatCompletionOptions(options));
     return {
       choices: result.choices.map((choice) => ({
