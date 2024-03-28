@@ -1,0 +1,23 @@
+{
+  "name": "tokenizer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/tokenizer/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/tokenizer",
+        "main": "modules/tokenizer/src/index.ts",
+        "tsConfig": "modules/tokenizer/tsconfig.lib.json",
+        "assets": ["modules/tokenizer/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs tokenizer {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
