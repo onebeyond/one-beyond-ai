@@ -1,0 +1,23 @@
+{
+  "name": "openai",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/openai/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/openai",
+        "main": "modules/openai/src/index.ts",
+        "tsConfig": "modules/openai/tsconfig.lib.json",
+        "assets": ["modules/openai/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs openai {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
