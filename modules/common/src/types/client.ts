@@ -5,6 +5,7 @@ export type ModelParams = {
   tokenCost: number;
   completionCost: number;
   contextSize: number;
+  currency: string;
 }
 
 export type OpenAIClientParams = ModelParams & {
