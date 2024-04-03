@@ -14,6 +14,7 @@ const clientOptions: AzureOpenAIClientParams = {
   completionCost: 0,
   tokenCost: 0,
   contextSize: 32768,
+  currency: 'USD',
 };
 
 describe('Azure OpenAI Client', () => {
