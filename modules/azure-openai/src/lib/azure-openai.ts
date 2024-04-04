@@ -1,14 +1,15 @@
 import {
-  AIClient,
+  AIClient, AudioTranscriptionOptions, AudioTranscriptionResult, AudioTranscriptionResultFormat,
   AzureOpenAIClientParams,
   ChatCompletion,
   ChatCompletionOptions,
   ChatRequestMessage,
   Embedding,
-  EmbeddingOptions,
+  EmbeddingOptions, streamToUint8Array,
 } from "@one-beyond-ai/common";
 import { AzureKeyCredential, OpenAIClient } from "@azure/openai";
 import { mapChatCompletionOptions, mapFinishReason, mapMessage, mapUsage } from "./mappers";
+import { ReadStream } from "fs";
 
 export class AzureOpenAIClient implements AIClient {
   private readonly client: OpenAIClient;
@@ -38,5 +39,10 @@ export class AzureOpenAIClient implements AIClient {
 
   public async getEmbeddings(input: string[], options?: EmbeddingOptions): Promise<Embedding> {
     return this.client.getEmbeddings(this.options.deploymentName, input, options);
+  }
+
+  public async getAudioTranscription<Format extends AudioTranscriptionResultFormat>(stream: ReadStream, format: Format, options?: AudioTranscriptionOptions): Promise<AudioTranscriptionResult<Format>> {
+    const file = await streamToUint8Array(stream);
+    return this.client.getAudioTranscription(this.options.deploymentName, file, format, options);
   }
 }

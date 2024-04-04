@@ -1,3 +1,4 @@
+export * from './audio-transcript';
 export * from './logger';
 export * from './document';
 export * from './client';
