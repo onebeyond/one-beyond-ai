@@ -4,7 +4,7 @@ export type AudioTranscriptionOptions = {
   temperature?: number;
 }
 
-export declare interface AudioSegment {
+export type AudioSegment = {
   id: number;
   start: number;
   end: number;
