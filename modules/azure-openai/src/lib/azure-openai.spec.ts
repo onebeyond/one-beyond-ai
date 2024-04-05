@@ -2,6 +2,7 @@ import { AzureKeyCredential, ChatCompletions, Embeddings, OpenAIClient as openAI
 import { AzureOpenAIClient } from "./azure-openai";
 import { AzureOpenAIClientParams, ChatRequestMessage } from "@one-beyond-ai/common";
 import { MockedClass } from "vitest";
+import {PassThrough} from 'stream';
 
 vi.mock('@azure/openai');
 const OpenAIClient: MockedClass<typeof openAIClient> = openAIClient as MockedClass<typeof openAIClient>;
@@ -21,6 +22,7 @@ describe('Azure OpenAI Client', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
   describe("constructor", () => {
     it("should create an instance of AzureOpenAIClient", () => {
       const client = new AzureOpenAIClient(clientOptions);
@@ -31,6 +33,7 @@ describe('Azure OpenAI Client', () => {
       expect(AzureKeyCredential).toHaveBeenCalledWith(clientOptions.apiKey);
     });
   });
+
   describe("getChatCompletion", () => {
     it("should call azure openai client getChatCompletions", async () => {
       const spy = vi.spyOn(OpenAIClient.prototype, 'getChatCompletions');
@@ -73,6 +76,7 @@ describe('Azure OpenAI Client', () => {
       expect(OpenAIClient.prototype.getChatCompletions).toHaveBeenCalledWith(clientOptions.deploymentName, messages, undefined);
     });
   });
+
   describe("getEmbeddings", () => {
     it("should call azure openai client getEmbeddings", async () => {
       const spy = vi.spyOn(OpenAIClient.prototype, 'getEmbeddings');
@@ -104,6 +108,24 @@ describe('Azure OpenAI Client', () => {
         }
       });
       expect(OpenAIClient.prototype.getEmbeddings).toHaveBeenCalledWith(clientOptions.deploymentName, input, undefined);
+    });
+  });
+
+  describe("getAudioTranscription", () => {
+    it("should call azure openai client getAudioTranscription", async () => {
+      const spy = vi.spyOn(OpenAIClient.prototype, 'getAudioTranscription');
+      spy.mockResolvedValue({
+        text: "Hello",
+      });
+      const client = new AzureOpenAIClient(clientOptions);
+      const stream = new PassThrough();
+      stream.write('Hello');
+      stream.end();
+      const result = await client.getAudioTranscription(stream as any, "json");
+      expect(result).toEqual({
+        text: "Hello",
+      });
+      expect(OpenAIClient.prototype.getAudioTranscription).toHaveBeenCalledWith(clientOptions.deploymentName, expect.any(Uint8Array), "json", undefined);
     });
   });
 });
