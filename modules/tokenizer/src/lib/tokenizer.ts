@@ -4,6 +4,9 @@ import { CharacterTextSplitter } from 'langchain/text_splitter';
 import { Tiktoken } from 'tiktoken/lite';
 import { load } from 'tiktoken/load';
 
+import registry from 'tiktoken/registry.json';
+import models from 'tiktoken/model_to_encoding.json';
+
 type TokenizerParams = {
   splitSeparator?: string;
   splitChunkSize?: number;
@@ -35,10 +38,10 @@ export class Tokenizer {
   }
 
   public async createTokens(content: string): Promise<Uint32Array> {
-    const registry = require('tiktoken/registry.json');
-    const models = require('tiktoken/model_to_encoding.json');
+    const modelsDic = models as { [key: string]: string };
+    const registryDic = registry as { [key: string]: Parameters<typeof load>[0] };
 
-    const model = await load(registry[models[this.model]]);
+    const model = await load(registryDic[modelsDic[this.model]]);
     const encoder = new Tiktoken(model.bpe_ranks, model.special_tokens, model.pat_str);
     const tokens = encoder.encode(content);
 
