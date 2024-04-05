@@ -1,4 +1,4 @@
-import { describe } from "vitest";
+import { describe, expect } from "vitest";
 import * as mappers from "./mappers";
 import {
   ChatCompletionOptions,
@@ -268,6 +268,49 @@ describe("OpenAI Mappers", () => {
             description: "description",
             parameters: {}
           }
+        }]
+      });
+    });
+  });
+
+  describe("mapAudioTranscriptionResultVerboseJson", () => {
+    it("should map OpenAI response to AudioTranscriptionResultVerboseJson", () => {
+      const input = {
+        text: "Hello",
+        task: "task",
+        language: "en",
+        duration: 1,
+        segments: [{
+          id: 1,
+          start: 0,
+          end: 1,
+          speaker: "speaker",
+          text: "Hello",
+          temperature: 0.5,
+          avg_logprob: 0.5,
+          compression_ratio: 0.5,
+          no_speech_prob: 0.5,
+          tokens: [1],
+          seek: 0
+        }]
+      };
+      const result = mappers.mapAudioTranscriptionResultVerboseJson(input);
+      expect(result).toEqual({
+        text: "Hello",
+        task: "task",
+        language: "en",
+        duration: 1,
+        segments: [{
+          id: 1,
+          start: 0,
+          end: 1,
+          text: "Hello",
+          temperature: 0.5,
+          avgLogprob: 0.5,
+          compressionRatio: 0.5,
+          noSpeechProb: 0.5,
+          tokens: [1],
+          seek: 0
         }]
       });
     });

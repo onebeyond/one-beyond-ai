@@ -5,6 +5,7 @@ import {
   ChatCompletionSystemMessageParam,
 } from "openai/src/resources/chat/completions";
 import {
+  AudioTranscriptionResultVerboseJson,
   ChatCompletionOptions,
   ChatRequestAssistantMessage, ChatRequestFunctionMessage,
   ChatRequestMessage,
@@ -135,5 +136,28 @@ export const mapChatCompletionOptions = (options?: ChatCompletionOptions): Omit<
     tools: options.tools,
     user: options.user,
     seed: options.seed,
+  }
+}
+
+export const mapAudioTranscriptionResultVerboseJson = (response: any): AudioTranscriptionResultVerboseJson => {
+  return {
+    text: response.text,
+    task: response.task,
+    language: response.language,
+    duration: response.duration,
+    segments: (response?.segments ?? []).map((segment: any) => {
+      return {
+        id: segment.id,
+        start: segment.start,
+        end: segment.end,
+        text: segment.text,
+        temperature: segment.temperature,
+        avgLogprob: segment.avg_logprob,
+        compressionRatio: segment.compression_ratio,
+        noSpeechProb: segment.no_speech_prob,
+        tokens: segment.tokens,
+        seek: segment.seek,
+      }
+    }),
   }
 }

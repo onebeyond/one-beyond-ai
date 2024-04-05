@@ -2,11 +2,13 @@ import { ChatRequestMessage, OpenAIClientParams } from "@one-beyond-ai/common";
 import { OpenAIClient } from "./openai";
 import { ChatCompletion } from "openai/resources/chat/completions";
 import { OpenAI as openAI } from "openai";
-import { beforeAll, MockedClass } from "vitest";
+import { MockedClass } from "vitest";
+import { PassThrough } from 'stream';
 
 vi.mock('openai');
 const completionCreateMock = vi.fn();
 const embeddingsCreateMock = vi.fn();
+const audioTranscriptionCreateMock = vi.fn();
 const OpenAI = openAI as MockedClass<typeof openAI>;
 
 const clientOptions: OpenAIClientParams = {
@@ -28,6 +30,11 @@ describe('OpenAI Client', () => {
       },
       embeddings: {
         create: embeddingsCreateMock
+      },
+      audio: {
+        transcriptions: {
+          create: audioTranscriptionCreateMock
+        }
       }
     } as any);
   });
@@ -128,5 +135,25 @@ describe('OpenAI Client', () => {
       });
     });
   });
-})
-;
+
+  describe("getAudioTranscription", () => {
+    it("should call openai client audio transcription function", async () => {
+      audioTranscriptionCreateMock.mockResolvedValue({
+        text: "Hello",
+      });
+      const client = new OpenAIClient(clientOptions);
+      const stream = new PassThrough();
+      stream.write('Hello');
+      stream.end();
+      const result = await client.getAudioTranscription(stream as any, "json");
+      expect(result).toEqual({
+        text: "Hello",
+      });
+      expect(audioTranscriptionCreateMock).toHaveBeenCalledWith({
+        model: clientOptions.model,
+        file: stream,
+        response_format: "json"
+      });
+    });
+  });
+});
