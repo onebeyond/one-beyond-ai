@@ -1,7 +1,7 @@
 import { ChatCompletion, ChatCompletionOptions, ChatRequestMessage } from "./completion";
 import { Embedding, EmbeddingOptions } from "./embedding";
 import { ReadStream } from "fs";
-import { AudioTranscriptionOptions, AudioTranscriptionResult, AudioTranscriptionResultFormat } from "./audio-transcript";
+import { AudioTranscriptionOptions, AudioTranscriptionResult, AudioTranscriptionResultFormat } from "./audio-transcription";
 
 export type ModelParams = {
   tokenCost: number;
