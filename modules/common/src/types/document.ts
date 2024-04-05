@@ -1,5 +1,5 @@
 export type ExtractedPage = {
-  pageNumber: number;
+  pageNumber?: number;
   text: string;
 };
 

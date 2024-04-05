@@ -1,10 +1,11 @@
 import { MimeType } from "@one-beyond-ai/mime-type";
 import { PDFExtractor } from "./pdf-extractor";
 import { DocxExtractor } from "./docx-extractor";
+import { ExtractedDocument } from "@one-beyond-ai/common";
 
 export class TextExtractor {
   constructor(private mimeType: MimeType) {}
-  public async extractText(filePath: string): Promise<string> {
+  public async extractText(filePath: string): Promise<ExtractedDocument> {
     const mimeType = this.mimeType.getFileMIMEType(filePath);
     if (mimeType === "application/pdf") {
       const extracted = await new PDFExtractor().extractText(filePath) as any;
@@ -14,9 +15,14 @@ export class TextExtractor {
       const extracted = await new DocxExtractor().extractText(filePath) as any;
       return extracted;
     }
-    if (mimeType === "application/x-iwork-pages-sffpages") {
-      return "PAGES text";
+
+    switch (mimeType) {
+      case "application/pdf":
+        return await new PDFExtractor().extractText(filePath) as any;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        return await new DocxExtractor().extractText(filePath) as any;
+      default:
+        throw new Error("Unsupported file type");
     }
-    return "";
   }
 }

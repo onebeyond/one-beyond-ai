@@ -1,12 +1,12 @@
-import { DocxLoader } from "langchain/document_loaders/fs/docx";
+import { TextLoader } from "langchain/document_loaders/fs/text";
 import { ExtractedDocument } from "@one-beyond-ai/common";
 import { Document } from "langchain/document";
 
-export class DocxExtractor {
+export class TextFileExtractor {
   constructor() {}
   public async loadFile(filePath: string): Promise<Document[]> {
-    const docxLoader = new DocxLoader(filePath);
-    return await docxLoader.load();
+    const textLoader = new TextLoader(filePath);
+    return await textLoader.load();
   }
   public async extractText(filePath: string): Promise<ExtractedDocument> {
     const rawDocument = await this.loadFile(filePath);
