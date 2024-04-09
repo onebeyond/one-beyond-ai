@@ -1,0 +1,23 @@
+{
+  "name": "embed",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "modules/embed/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/modules/embed",
+        "main": "modules/embed/src/index.ts",
+        "tsConfig": "modules/embed/tsconfig.lib.json",
+        "assets": ["modules/embed/*.md"]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs embed {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    }
+  },
+  "tags": []
+}
