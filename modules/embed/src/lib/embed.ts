@@ -43,7 +43,7 @@ export class Embed {
   private readonly textExtractor: TextExtractor;
 
   constructor(private client: AIClient, private options = defaultOptions) {
-    this.cost = new Cost(client);
+    this.cost = new Cost(this.client);
     this.tokenizer = options?.tokenizer ?? new Tokenizer({
       splitSeparator: this.options?.splitSeparator,
       splitChunkSize: this.options?.splitChunkSize,
@@ -53,7 +53,7 @@ export class Embed {
     this.textExtractor = options?.textExtractor ?? new TextExtractor(this.mimeType);
   }
 
-  private async embed<T extends Chunk>(chunk: T, options?: EmbeddingOptions): Promise<T & EmbeddingResult> {
+  public async embed<T extends Chunk>(chunk: T, options?: EmbeddingOptions): Promise<T & EmbeddingResult> {
     const result = await this.client.getEmbeddings([chunk.text], options);
     const cost = this.cost.getEmbeddingCost(result);
     return {
@@ -63,26 +63,26 @@ export class Embed {
     }
   }
 
-  public async getChunks<T extends Chunk>(obj: T): Promise<T[]> {
+  public async chunkText<T extends Chunk>(obj: T): Promise<T[]> {
     const contents = await this.tokenizer.docSplitter(obj.text);
     return contents.map((sc) => ({ ...obj, text: sc.pageContent }));
   }
 
   public async embedChunks<T extends Chunk>(chunks: T[], options?: EmbeddingOptions): Promise<Array<T & EmbeddingResult>> {
-    const promises = chunks.map((chunk) => () => this.embed(chunk, options));
+    const promises = chunks.map((chunk) => async () => this.embed(chunk, options));
     return concurrentRunner(promises, this.options?.concurrency ?? 1);
   }
 
   public async embedDocument(filePath: string, options?: EmbeddingOptions): Promise<Array<ExtractedPage & EmbeddingResult>> {
     const document = await this.textExtractor.extractText(filePath);
-    const chunks = await Promise.all(document.pages.map((page) => this.getChunks(page)));
+    const chunks = await Promise.all(document.pages.map((page) => this.chunkText(page)));
     return this.embedChunks(chunks.flat(), options);
   }
 
   public async embedText(input: string, options?: EmbeddingOptions): Promise<Array<EmbeddingResult & {
     text: string
   }>> {
-    const chunks = await this.getChunks({ text: input });
+    const chunks = await this.chunkText({ text: input });
     return await this.embedChunks(chunks, options);
   }
 
@@ -98,5 +98,4 @@ export class Embed {
     const cost = this.cost.getTokenCost(tokenCount);
     return { token: cost, total: cost, currency: this.client.options.currency };
   }
-
 }
