@@ -1,12 +1,13 @@
 import { logger } from './logger';
 import { LoggerClient, LogLevel } from '../types';
+import { vi } from 'vitest';
 
 describe('logger', () => {
-  const loggerMethod = jest.fn();
+  const loggerMethod = vi.fn();
   let clientMock: LoggerClient;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     loggerMethod.mockImplementation((...messages) => messages);
     clientMock = {
       error: loggerMethod,

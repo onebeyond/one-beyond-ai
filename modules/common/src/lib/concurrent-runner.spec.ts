@@ -1,11 +1,12 @@
 import { concurrentRunner } from "./concurrent-runner";
+import { vi } from "vitest";
 
-const spy = jest.fn();
+const spy = vi.fn();
 const wrapFn = (i: number) => async () => spy(i);
 
 describe("Concurrent Runner", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should resolve all tasks", async () => {
