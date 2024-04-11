@@ -1,26 +1,19 @@
-import { MimeType } from "@one-beyond-ai/mime-type";
 import { PDFExtractor } from "./pdf-extractor";
 import { DocxExtractor } from "./docx-extractor";
-import { ExtractedDocument } from "@one-beyond-ai/common";
+import { ExtractedDocument, FileType } from "@one-beyond-ai/common";
+import { ReadStream } from "fs";
+import { TextFileExtractor } from "./text-file-extractor";
 
 export class TextExtractor {
-  constructor(private mimeType: MimeType) {}
-  public async extractText(filePath: string): Promise<ExtractedDocument> {
-    const mimeType = this.mimeType.getFileMIMEType(filePath);
-    if (mimeType === "application/pdf") {
-      const extracted = await new PDFExtractor().extractText(filePath) as any;
-      return extracted;
-    }
-    if (mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-      const extracted = await new DocxExtractor().extractText(filePath) as any;
-      return extracted;
-    }
-
-    switch (mimeType) {
-      case "application/pdf":
-        return await new PDFExtractor().extractText(filePath) as any;
-      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        return await new DocxExtractor().extractText(filePath) as any;
+  constructor() {}
+  public async extractText(stream: ReadStream, fileType: FileType): Promise<ExtractedDocument> {
+    switch (fileType) {
+      case "pdf":
+        return new PDFExtractor().extractText(stream);
+      case "docx":
+        return new DocxExtractor().extractText(stream);
+      case "text":
+        return new TextFileExtractor().extractText(stream);
       default:
         throw new Error("Unsupported file type");
     }

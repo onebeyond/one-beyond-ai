@@ -5,6 +5,7 @@ import { Embed, } from './embed';
 import { Tokenizer } from "@one-beyond-ai/tokenizer";
 import { MimeType } from "@one-beyond-ai/mime-type";
 import { TextExtractor } from "@one-beyond-ai/text-document-extractor";
+import { PassThrough } from "stream";
 
 vi.mock("@one-beyond-ai/cost");
 vi.mock("@one-beyond-ai/tokenizer");
@@ -15,6 +16,13 @@ const CostMock: MockedClass<typeof Cost> = Cost as MockedClass<typeof Cost>;
 const TokenizerMock: MockedClass<typeof Tokenizer> = Tokenizer as MockedClass<typeof Tokenizer>;
 const MimeTypeMock: MockedClass<typeof MimeType> = MimeType as MockedClass<typeof MimeType>;
 const TextExtractorMock: MockedClass<typeof TextExtractor> = TextExtractor as MockedClass<typeof TextExtractor>;
+
+const getStream = () => {
+  const stream = new PassThrough();
+  stream.write("Hello");
+  stream.end();
+  return stream as any;
+}
 
 describe('Embed module', () => {
   const client: Mocked<AIClient> = {
@@ -73,7 +81,8 @@ describe('Embed module', () => {
   });
 
   it("should embed a document", async () => {
-    const result = await embed.embedDocument("path/to/file");
+    const stream = getStream();
+    const result = await embed.embedDocument(stream, "text");
     expect(result).toEqual([{
       text: "Hello World",
       pageNumber: 1,
@@ -81,7 +90,7 @@ describe('Embed module', () => {
       usage: { promptTokens: 1, totalTokens: 3 },
       cost: { token: 0.1, total: 0.1, currency: "USD" }
     }]);
-    expect(TextExtractorMock.prototype.extractText).toHaveBeenCalledWith("path/to/file");
+    expect(TextExtractorMock.prototype.extractText).toHaveBeenCalledWith(stream, "text");
   });
 
   it("should embed text", async () => {
@@ -95,9 +104,10 @@ describe('Embed module', () => {
   });
 
   it("should get document cost estimation", async () => {
-    const result = await embed.getDocumentCostEstimation("path/to/file");
+    const stream = getStream();
+    const result = await embed.getDocumentCostEstimation(stream, "text");
     expect(result).toEqual({ token: 0.1, total: 0.1, currency: "USD" });
-    expect(TextExtractorMock.prototype.extractText).toHaveBeenCalledWith("path/to/file");
+    expect(TextExtractorMock.prototype.extractText).toHaveBeenCalledWith(stream, "text");
   });
 
   it("should get text cost estimation", async () => {

@@ -4,19 +4,19 @@ import {
   Embedding,
   EmbeddingCost,
   EmbeddingOptions,
-  ExtractedPage
+  ExtractedPage,
+  FileType
 } from "@one-beyond-ai/common";
 import { Cost } from "@one-beyond-ai/cost";
-import { MimeType } from "@one-beyond-ai/mime-type";
 import { TextExtractor } from "@one-beyond-ai/text-document-extractor";
 import { Tokenizer } from "@one-beyond-ai/tokenizer";
+import { ReadStream } from "fs";
 
 export type EmbedOptions = {
   concurrency?: number;
   splitSeparator?: string;
   splitChunkSize?: number;
   splitChunkOverlap?: number;
-  mimeType?: MimeType;
   textExtractor?: TextExtractor;
   tokenizer?: Tokenizer;
 }
@@ -39,7 +39,6 @@ export type EmbeddingResult = Embedding & {
 export class Embed {
   private readonly cost: Cost;
   private readonly tokenizer: Tokenizer;
-  private readonly mimeType: MimeType;
   private readonly textExtractor: TextExtractor;
 
   constructor(private client: AIClient, private options = defaultOptions) {
@@ -50,8 +49,7 @@ export class Embed {
       splitChunkOverlap: this.options?.splitChunkOverlap,
       model: this.client.options.tokenizerModel,
     });
-    this.mimeType = options?.mimeType ?? new MimeType();
-    this.textExtractor = options?.textExtractor ?? new TextExtractor(this.mimeType);
+    this.textExtractor = options?.textExtractor ?? new TextExtractor();
   }
 
   public async embed<T extends Chunk>(chunk: T, options?: EmbeddingOptions): Promise<T & EmbeddingResult> {
@@ -74,8 +72,8 @@ export class Embed {
     return concurrentRunner(promises, this.options?.concurrency ?? 1);
   }
 
-  public async embedDocument(filePath: string, options?: EmbeddingOptions): Promise<Array<ExtractedPage & EmbeddingResult>> {
-    const document = await this.textExtractor.extractText(filePath);
+  public async embedDocument(stream: ReadStream, fileType: FileType, options?: EmbeddingOptions): Promise<Array<ExtractedPage & EmbeddingResult>> {
+    const document = await this.textExtractor.extractText(stream, fileType);
     const chunks = await Promise.all(document.pages.map((page) => this.chunkText(page)));
     return this.embedChunks(chunks.flat(), options);
   }
@@ -87,8 +85,8 @@ export class Embed {
     return this.embedChunks(chunks, options);
   }
 
-  public async getDocumentCostEstimation(filePath: string): Promise<EmbeddingCost> {
-    const document = await this.textExtractor.extractText(filePath);
+  public async getDocumentCostEstimation(stream: ReadStream, fileType: FileType): Promise<EmbeddingCost> {
+    const document = await this.textExtractor.extractText(stream, fileType);
     const text = document.pages.map((page) => page.text).join('\n');
     return this.getTextCostEstimation(text);
   }
