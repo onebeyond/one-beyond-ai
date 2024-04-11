@@ -19,7 +19,7 @@
       "dependsOn": ["build"]
     },
     "install": {
-      "command": "npm install"
+      "command": "cd modules/tokenizer && npm install"
     }
   },
   "tags": []
