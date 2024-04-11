@@ -18,6 +18,7 @@ const clientOptions: OpenAIClientParams = {
   tokenCost: 0,
   contextSize: 32768,
   currency: 'USD',
+  tokenizerModel: 'gpt-4',
 };
 
 describe('OpenAI Client', () => {

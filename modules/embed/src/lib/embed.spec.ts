@@ -19,7 +19,8 @@ const TextExtractorMock: MockedClass<typeof TextExtractor> = TextExtractor as Mo
 describe('Embed module', () => {
   const client: Mocked<AIClient> = {
     options: {
-      currency: "USD"
+      currency: "USD",
+      tokenizerModel: "gpt-4",
     },
     getEmbeddings: vi.fn(),
   } as any;

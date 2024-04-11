@@ -48,6 +48,7 @@ export class Embed {
       splitSeparator: this.options?.splitSeparator,
       splitChunkSize: this.options?.splitChunkSize,
       splitChunkOverlap: this.options?.splitChunkOverlap,
+      model: this.client.options.tokenizerModel,
     });
     this.mimeType = options?.mimeType ?? new MimeType();
     this.textExtractor = options?.textExtractor ?? new TextExtractor(this.mimeType);
@@ -83,7 +84,7 @@ export class Embed {
     text: string
   }>> {
     const chunks = await this.chunkText({ text: input });
-    return await this.embedChunks(chunks, options);
+    return this.embedChunks(chunks, options);
   }
 
   public async getDocumentCostEstimation(filePath: string): Promise<EmbeddingCost> {
