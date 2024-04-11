@@ -11,7 +11,7 @@ export class TextExtractor {
         return new PDFExtractor().extractText(stream);
       case "docx":
         return new DocxExtractor().extractText(stream);
-      case "text":
+      case "txt":
         return new TextFileExtractor().extractText(stream);
       default:
         throw new Error("Unsupported file type");

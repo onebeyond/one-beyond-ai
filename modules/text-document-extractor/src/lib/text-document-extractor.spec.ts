@@ -30,7 +30,7 @@ describe('TextExtractor', () => {
   });
   it('should extract text properly from text document', async () => {
     const stream = createReadStream(path.join(__dirname, '../../test-files/test.txt'));
-    const extracted = await textExtractor.extractText(stream, 'text');
+    const extracted = await textExtractor.extractText(stream, 'txt');
     const {
       pages,
     } = extracted;

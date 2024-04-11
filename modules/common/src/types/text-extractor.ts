@@ -1,2 +1,2 @@
-export const FileTypes = ["pdf", "docx", "text"] as const;
+export const FileTypes = ["pdf", "docx", "txt"] as const;
 export type FileType = typeof FileTypes[number];
