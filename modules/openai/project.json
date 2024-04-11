@@ -17,6 +17,9 @@
     "publish": {
       "command": "node tools/scripts/publish.mjs openai {args.ver} {args.tag}",
       "dependsOn": ["build"]
+    },
+    "install": {
+      "command": "npm install"
     }
   },
   "tags": []

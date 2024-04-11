@@ -13,6 +13,13 @@
         "tsConfig": "modules/text-document-extractor/tsconfig.lib.json",
         "assets": ["modules/text-document-extractor/*.md"]
       }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs text-document-extractor {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "install": {
+      "command": "npm install"
     }
   },
   "tags": []
