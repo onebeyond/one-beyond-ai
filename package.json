@@ -28,7 +28,9 @@
     "verdaccio": "^5.0.4",
     "vite": "~5.0.0",
     "vite-plugin-dts": "~2.3.0",
-    "vitest": "^1.0.4"
+    "vitest": "^1.0.4",
+    "vite-plugin-top-level-await": "^1.4.1",
+    "vite-plugin-wasm": "^3.3.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
