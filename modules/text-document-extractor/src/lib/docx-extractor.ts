@@ -4,7 +4,6 @@ import { Document } from "langchain/document";
 import { ReadStream } from "fs";
 
 export class DocxExtractor {
-  constructor() {}
   public async loadFile(stream: ReadStream): Promise<Document[]> {
     const file = await streamToBlob(stream);
     const docxLoader = new DocxLoader(file);
@@ -12,12 +11,11 @@ export class DocxExtractor {
   }
   public async extractText(stream: ReadStream): Promise<ExtractedDocument> {
     const rawDocument = await this.loadFile(stream);
-    const document: ExtractedDocument = {
+    return {
       pages: rawDocument.map((page, index) => ({
         text: page.pageContent,
         pageNumber: index + 1,
       })),
     };
-    return document;
   }
 }

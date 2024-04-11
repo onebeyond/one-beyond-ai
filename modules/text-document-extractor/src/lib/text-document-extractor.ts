@@ -5,7 +5,6 @@ import { ReadStream } from "fs";
 import { TextFileExtractor } from "./text-file-extractor";
 
 export class TextExtractor {
-  constructor() {}
   public async extractText(stream: ReadStream, fileType: FileType): Promise<ExtractedDocument> {
     switch (fileType) {
       case "pdf":

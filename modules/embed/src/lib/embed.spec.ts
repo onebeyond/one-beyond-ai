@@ -6,6 +6,7 @@ import { Tokenizer } from "@one-beyond-ai/tokenizer";
 import { MimeType } from "@one-beyond-ai/mime-type";
 import { TextExtractor } from "@one-beyond-ai/text-document-extractor";
 import { PassThrough } from "stream";
+import { ReadStream } from "fs";
 
 vi.mock("@one-beyond-ai/cost");
 vi.mock("@one-beyond-ai/tokenizer");
@@ -21,17 +22,17 @@ const getStream = () => {
   const stream = new PassThrough();
   stream.write("Hello");
   stream.end();
-  return stream as any;
+  return stream as unknown as ReadStream;
 }
 
 describe('Embed module', () => {
-  const client: Mocked<AIClient> = {
+  const client = {
     options: {
       currency: "USD",
       tokenizerModel: "gpt-4",
     },
     getEmbeddings: vi.fn(),
-  } as any;
+  } as unknown as Mocked<AIClient>;
   const embed = new Embed(client);
 
   beforeEach(() => {
