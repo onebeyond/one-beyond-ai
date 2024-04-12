@@ -32,7 +32,7 @@ export const mapMessage = (message?: AzureChatResponseMessage): ChatResponseMess
     role: mapRole(message.role),
     content: message.content,
     functionCall: message.functionCall,
-    toolCalls: message.toolCalls
+    toolCalls: message.toolCalls ?? []
   };
 }
 

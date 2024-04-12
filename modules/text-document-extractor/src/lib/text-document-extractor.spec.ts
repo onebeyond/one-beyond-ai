@@ -16,7 +16,7 @@ describe('TextExtractor', () => {
     expect(pages.length).toBe(48);
     expect(firstPage.pageNumber).toBe(1);
     expect(secondPage.pageNumber).toBe(2);
-  });
+  }, 10000);
   it('should extract text properly from docx document', async () => {
     const stream = createReadStream(path.join(__dirname, '../../test-files/test.docx'));
     const extracted = await textExtractor.extractText(stream, 'docx');

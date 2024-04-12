@@ -65,6 +65,7 @@ describe('Azure OpenAI Client', () => {
           message: {
             role: "assistant",
             content: "Paris",
+            toolCalls: [],
           },
           finishReason: "stop"
         }],
