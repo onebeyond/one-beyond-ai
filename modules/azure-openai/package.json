@@ -2,7 +2,8 @@
   "name": "@one-beyond-ai/azure-openai",
   "version": "0.0.1",
   "dependencies": {
-    "@azure/openai": "^1.0.0-beta.11"
+    "@azure/openai": "^1.0.0-beta.11",
+    "@one-beyond-ai/common": "*"
   },
   "main": "./index.js",
   "module": "./index.mjs",

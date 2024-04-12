@@ -4,7 +4,8 @@
   "dependencies": {
     "langchain": "^0.1.26",
     "mammoth": "^1.7.0",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "@one-beyond-ai/common": "*"
   },
   "main": "./index.js",
   "module": "./index.mjs",

@@ -3,5 +3,11 @@
   "version": "0.0.1",
   "main": "./index.js",
   "module": "./index.mjs",
-  "typings": "./index.d.ts"
+  "typings": "./index.d.ts",
+  "dependencies": {
+    "@one-beyond-ai/tokenizer": "*",
+    "@one-beyond-ai/text-document-extractor": "*",
+    "@one-beyond-ai/cost": "*",
+    "@one-beyond-ai/common": "*"
+  }
 }

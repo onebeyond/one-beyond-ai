@@ -21,6 +21,7 @@ export default defineConfig({
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
+    ssr: true,
     outDir: '../../dist/modules/azure-openai',
     reportCompressedSize: true,
     commonjsOptions: {

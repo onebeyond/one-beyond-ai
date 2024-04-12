@@ -1,7 +1,9 @@
 {
   "name": "@one-beyond-ai/cost",
   "version": "0.0.1",
-  "dependencies": {},
+  "dependencies": {
+    "@one-beyond-ai/common": "*"
+  },
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts"
