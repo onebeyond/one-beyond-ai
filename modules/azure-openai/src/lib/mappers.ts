@@ -7,12 +7,10 @@ import {
 } from "@one-beyond-ai/common";
 import {
   CompletionsUsage as AzureCompletionsUsage,
-  GetChatCompletionsOptions
-} from "@azure/openai/types/openai";
-import {
+  GetChatCompletionsOptions,
   ChatCompletionsResponseFormat,
-  ChatResponseMessage as AzureChatResponseMessage
-} from "@azure/openai/types/src/models/models";
+  ChatResponseMessage as AzureChatResponseMessage,
+} from "@azure/openai";
 
 export const mapUsage = (usage?: AzureCompletionsUsage): CompletionUsage => {
   return {
@@ -35,7 +33,11 @@ export const mapMessage = (message?: AzureChatResponseMessage): ChatResponseMess
     role: mapRole(message.role),
     content: message.content,
     functionCall: message.functionCall,
-    toolCalls: message.toolCalls ?? []
+    toolCalls: message.toolCalls.map((toolCall) => ({
+      id: toolCall.id,
+      type: "function",
+      function: toolCall.function,
+    })),
   };
 }
 
