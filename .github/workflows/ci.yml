@@ -33,4 +33,5 @@ jobs:
       - run: npx nx run-many -t install
 
 #      - run: npx nx-cloud record -- nx format:check
-      - run: npx nx run-many -t test build
+      - run: npx nx run-many -t test
+      - run: npx nx run-many -t build
