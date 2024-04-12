@@ -1,5 +1,5 @@
 import {
-  ChatCompletionOptions,
+  ChatCompletionOptions, ChatCompletionsFunctionToolCall,
   ChatResponseMessage,
   ChatRole, ChatRoles,
   CompletionFinishReason, CompletionFinishReasons,
@@ -33,11 +33,7 @@ export const mapMessage = (message?: AzureChatResponseMessage): ChatResponseMess
     role: mapRole(message.role),
     content: message.content,
     functionCall: message.functionCall,
-    toolCalls: (message.toolCalls ?? []).map((toolCall) => ({
-      id: toolCall.id,
-      type: "function",
-      function: toolCall.function,
-    })),
+    toolCalls: message.toolCalls as unknown as ChatCompletionsFunctionToolCall[] ?? []
   };
 }
 
