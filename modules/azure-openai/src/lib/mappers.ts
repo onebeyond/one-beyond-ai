@@ -7,9 +7,12 @@ import {
 } from "@one-beyond-ai/common";
 import {
   CompletionsUsage as AzureCompletionsUsage,
-  ChatResponseMessage as AzureChatResponseMessage, GetChatCompletionsOptions
+  GetChatCompletionsOptions
 } from "@azure/openai/types/openai";
-import { ChatCompletionsResponseFormat } from "@azure/openai/types/src/models/models";
+import {
+  ChatCompletionsResponseFormat,
+  ChatResponseMessage as AzureChatResponseMessage
+} from "@azure/openai/types/src/models/models";
 
 export const mapUsage = (usage?: AzureCompletionsUsage): CompletionUsage => {
   return {
