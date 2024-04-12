@@ -28,14 +28,12 @@ describe('tokenizer', () => {
   it('createTokens work correctly', async () => {
     const tokenizer = new Tokenizer();
     const result = await tokenizer.createTokens('hello world');
-    expect(result).toEqual(Uint32Array.from([15339, 1917]));
+    expect(result).toEqual([15339, 1917]);
   });
 
   it('getDocTokens work correctly', async () => {
     const tokenizer = new Tokenizer();
     const result = await tokenizer.getDocTokens(content);
-
     expect(result.length).toEqual(8);
-    expect(result[0] instanceof Uint32Array).toBeTruthy();
   });
 });

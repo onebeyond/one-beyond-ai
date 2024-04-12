@@ -3,9 +3,5 @@
   "version": "0.0.1",
   "main": "./index.js",
   "module": "./index.mjs",
-  "typings": "./index.d.ts",
-  "devDependencies": {
-    "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
-  }
+  "typings": "./index.d.ts"
 }
