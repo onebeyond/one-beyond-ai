@@ -19,7 +19,6 @@
       "@one-beyond-ai/common": ["modules/common/src/index.ts"],
       "@one-beyond-ai/cost": ["modules/cost/src/index.ts"],
       "@one-beyond-ai/embed": ["modules/embed/src/index.ts"],
-      "@one-beyond-ai/mime-type": ["modules/mime-type/src/index.ts"],
       "@one-beyond-ai/openai": ["modules/openai/src/index.ts"],
       "@one-beyond-ai/text-document-extractor": ["modules/text-document-extractor/src/index.ts"],
       "@one-beyond-ai/tokenizer": ["modules/tokenizer/src/index.ts"]
