@@ -26,25 +26,28 @@ export class InfraStack extends cdk.Stack {
       entry: 'lambdas/announcement-uploaded-event-handler.ts',
       bundling: {
         format: OutputFormat.ESM,
-      },
+        mainFields: ['module', 'main'],
+        target: 'esnext',
+        banner: "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);",
+      }
     });
 
-    // bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(topic));
+    bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(topic));
 
     const queue = new sqs.Queue(this, getResourceName('AnnouncementFileUploadedEventQueue'), {
       queueName: getResourceName('AnnouncementFileUploadedEventQueue'),
       visibilityTimeout: cdk.Duration.seconds(120),
     });
 
-    // const subscription = new SqsSubscription(queue, {
-    //   filterPolicy: {
-    //     eventName: sns.SubscriptionFilter.stringFilter({
-    //       allowlist: ['ObjectCreated:Put'],
-    //     }),
-    //   },
-    // });
+    const subscription = new SqsSubscription(queue, {
+      // filterPolicy: {
+      //   eventName: sns.SubscriptionFilter.stringFilter({
+      //     allowlist: ['ObjectCreated:Put'],
+      //   }),
+      // },
+    });
 
-    // topic.addSubscription(subscription);
+    topic.addSubscription(subscription);
 
     const eventSource = new lambdaEventSources.SqsEventSource(queue);
     lambda.addEventSource(eventSource);

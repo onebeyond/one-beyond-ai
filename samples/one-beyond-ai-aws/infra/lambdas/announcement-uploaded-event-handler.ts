@@ -1,5 +1,4 @@
 import { SQSHandler, SQSEvent } from 'aws-lambda';
-import { TextExtractor } from "@one-beyond-ai/text-document-extractor";
 import { S3 } from 'aws-sdk';
 
 const s3 = new S3();
