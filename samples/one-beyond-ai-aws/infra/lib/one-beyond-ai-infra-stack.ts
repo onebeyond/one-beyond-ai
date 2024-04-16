@@ -14,16 +14,16 @@ export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const bucket = new s3.Bucket(this, getResourceName('AnnouncementsBucket'), {
-      bucketName: 'announcements-bucket',
+    const bucket = new s3.Bucket(this, getResourceName('FileBucket'), {
+      bucketName: 'file-bucket',
     });
-    const topic = new sns.Topic(this, getResourceName('AnnouncementFileEventTopic'), {
-      topicName: getResourceName('AnnouncementFileEventTopic'),
+    const topic = new sns.Topic(this, getResourceName('FilePutEventTopic'), {
+      topicName: getResourceName('FilePutEventTopic'),
     });
-    const lambda = new NodejsFunction(this, getResourceName('AnnouncementFileUploadedEventHandler'), {
-      functionName: getResourceName('AnnouncementFileUploadedEventHandler'),
+    const lambda = new NodejsFunction(this, getResourceName('FileUploadedEventHandler'), {
+      functionName: getResourceName('FileUploadedEventHandler'),
       runtime: Runtime.NODEJS_20_X,
-      entry: 'lambdas/announcement-uploaded-event-handler.ts',
+      entry: 'lambdas/file-uploaded-event-handler.ts',
       bundling: {
         format: OutputFormat.ESM,
         mainFields: ['module', 'main'],
@@ -34,37 +34,33 @@ export class InfraStack extends cdk.Stack {
 
     bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(topic));
 
-    const queue = new sqs.Queue(this, getResourceName('AnnouncementFileUploadedEventQueue'), {
-      queueName: getResourceName('AnnouncementFileUploadedEventQueue'),
+    const queue = new sqs.Queue(this, getResourceName('FileUploadedEventQueue'), {
+      queueName: getResourceName('FileUploadedEventQueue'),
       visibilityTimeout: cdk.Duration.seconds(120),
     });
 
-    const subscription = new SqsSubscription(queue, {
-      // filterPolicy: {
-      //   eventName: sns.SubscriptionFilter.stringFilter({
-      //     allowlist: ['ObjectCreated:Put'],
-      //   }),
-      // },
-    });
-
+    const subscription = new SqsSubscription(queue);
     topic.addSubscription(subscription);
 
-    const eventSource = new lambdaEventSources.SqsEventSource(queue);
+    const eventSource = new lambdaEventSources.SqsEventSource(queue, {
+      batchSize: 1,
+      maxConcurrency: 5,
+    });
     lambda.addEventSource(eventSource);
 
-    new cdk.CfnOutput(this, getResourceName('AnnouncementFileEventTopicArn'), {
+    new cdk.CfnOutput(this, getResourceName('FilePutEventTopicArn'), {
       value: topic.topicArn,
     });
-    new cdk.CfnOutput(this, getResourceName('AnnouncementFileUploadedEventQueueArn'), {
+    new cdk.CfnOutput(this, getResourceName('FileUploadedEventQueueArn'), {
       value: queue.queueArn,
     });
-    new cdk.CfnOutput(this, getResourceName('AnnouncementFileUploadedEventQueueUrl'), {
+    new cdk.CfnOutput(this, getResourceName('FileUploadedEventQueueUrl'), {
       value: queue.queueUrl,
     });
-    new cdk.CfnOutput(this, getResourceName('AnnouncementFileUploadHandlerArn'), {
+    new cdk.CfnOutput(this, getResourceName('FileUploadHandlerArn'), {
       value: lambda.functionArn,
     });
-    new cdk.CfnOutput(this, getResourceName('AnnouncementsBucketArn'), {
+    new cdk.CfnOutput(this, getResourceName('sBucketArn'), {
       value: bucket.bucketArn,
     });
   }

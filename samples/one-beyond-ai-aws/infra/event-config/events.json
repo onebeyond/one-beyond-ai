@@ -1,0 +1,9 @@
+{
+  "TopicConfigurations": [
+    {
+      "Id": "s3PutEventTriggersSNS",
+      "TopicArn": "arn:aws:sns:eu-west-1:000000000000:localOneBeyondAIInfraFilePutEventTopic",
+      "Events": ["s3:ObjectCreated:*"]
+    }
+  ]
+}

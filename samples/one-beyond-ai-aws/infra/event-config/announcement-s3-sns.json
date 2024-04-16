@@ -1,9 +1,0 @@
-{
-  "TopicConfigurations": [
-    {
-      "Id": "s3EventTriggersSNS",
-      "TopicArn": "arn:aws:sns:eu-west-1:000000000000:localOneBeyondAIInfraAnnouncementFileEventTopic",
-      "Events": ["s3:ObjectCreated:*"]
-    }
-  ]
-}
