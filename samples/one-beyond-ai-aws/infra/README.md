@@ -21,6 +21,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `awslocal s3api put-object --bucket file-bucket --key test001.txt --body=test.txt`    To upload files to S3
 * `aws logs describe-log-streams --log-group-name '/aws/lambda/localOneBeyondAIInfraFileUploadedEventHandler'`    Query lambda log streams
 * `awslocal logs get-log-events --log-group-name '/aws/lambda/localOneBeyondAIInfraFileUploadedEventHandler' --log-stream-name '2024/04/09/[$LATEST]50482fc7a2a12e23715128fcfe2af71e'`    List logs from log stream
+* `awslocal logs delete-log-stream --log-group-name '/aws/lambda/localOneBeyondAIInfraFileUploadedEventHandler' --log-stream-name '2024/04/16/[$LATEST]400e6b72bc9a7580648115fd8b626765'`    Delete a log stream
 * `awslocal cloudformation delete-stack --stack-name localOneBeyondAIInfraStack` To delete a stack
 * `awslocal cloudformation describe-stacks` To list stacks
 * `awslocal sns publish --topic-arn arn:aws:sns:eu-west-1:000000000000:localOneBeyondAIInfraFilePutEventTopic --message=hellohello` To test sns publish

@@ -1,18 +1,18 @@
 import { PDFExtractor } from "./pdf-extractor";
 import { DocxExtractor } from "./docx-extractor";
 import { ExtractedDocument, FileType } from "@one-beyond-ai/common";
-import { ReadStream } from "fs";
 import { TextFileExtractor } from "./text-file-extractor";
+import { Readable } from "stream";
 
 export class TextExtractor {
-  public async extractText(stream: ReadStream, fileType: FileType): Promise<ExtractedDocument> {
+  public async extractText(readable: Readable, fileType: FileType): Promise<ExtractedDocument> {
     switch (fileType) {
       case "pdf":
-        return new PDFExtractor().extractText(stream);
+        return new PDFExtractor().extractText(readable);
       case "docx":
-        return new DocxExtractor().extractText(stream);
+        return new DocxExtractor().extractText(readable);
       case "txt":
-        return new TextFileExtractor().extractText(stream);
+        return new TextFileExtractor().extractText(readable);
       default:
         throw new Error("Unsupported file type");
     }

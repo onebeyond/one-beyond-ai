@@ -1,16 +1,16 @@
 import { DocxLoader } from "langchain/document_loaders/fs/docx";
-import { ExtractedDocument, streamToBlob } from "@one-beyond-ai/common";
+import { ExtractedDocument, readableToBlob } from "@one-beyond-ai/common";
 import { Document } from "langchain/document";
-import { ReadStream } from "fs";
+import { Readable } from "stream";
 
 export class DocxExtractor {
-  public async loadFile(stream: ReadStream): Promise<Document[]> {
-    const file = await streamToBlob(stream);
+  public async loadFile(readable: Readable): Promise<Document[]> {
+    const file = await readableToBlob(readable);
     const docxLoader = new DocxLoader(file);
     return await docxLoader.load();
   }
-  public async extractText(stream: ReadStream): Promise<ExtractedDocument> {
-    const rawDocument = await this.loadFile(stream);
+  public async extractText(readable: Readable): Promise<ExtractedDocument> {
+    const rawDocument = await this.loadFile(readable);
     return {
       pages: rawDocument.map((page, index) => ({
         text: page.pageContent,

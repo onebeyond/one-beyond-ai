@@ -1,13 +1,17 @@
-import { TextExtractor } from './text-document-extractor';
-import { createReadStream } from 'fs';
 import * as path from 'path';
+import { createReadStream } from 'fs';
+import { TextExtractor } from './text-document-extractor';
+import { buffer } from 'node:stream/consumers';
+import { Readable } from 'stream';
 
 const textExtractor = new TextExtractor();
 
-describe('TextExtractor', () => {
+describe('TextDocumentExtractor', () => {
   it('should extract text properly from pdf document', async () => {
-    const stream = createReadStream(path.join(__dirname, '../../test-files/test.pdf'));
-    const extracted = await textExtractor.extractText(stream, 'pdf');
+    const readStream = createReadStream(path.join(__dirname, '../../test-files/test.pdf'));
+    const bufferFromStream = await buffer(readStream);
+    const readable = Readable.from(bufferFromStream);
+    const extracted = await textExtractor.extractText(readable, 'pdf');
     const {
       pages,
     } = extracted;
@@ -18,8 +22,10 @@ describe('TextExtractor', () => {
     expect(secondPage.pageNumber).toBe(2);
   }, 10000);
   it('should extract text properly from docx document', async () => {
-    const stream = createReadStream(path.join(__dirname, '../../test-files/test.docx'));
-    const extracted = await textExtractor.extractText(stream, 'docx');
+    const readStream = createReadStream(path.join(__dirname, '../../test-files/test.docx'));
+    const bufferFromStream = await buffer(readStream);
+    const readable = Readable.from(bufferFromStream);
+    const extracted = await textExtractor.extractText(readable, 'docx');
     const {
       pages,
     } = extracted;
@@ -29,8 +35,10 @@ describe('TextExtractor', () => {
     expect(firstPage.pageNumber).toBe(1);
   }, 10000);
   it('should extract text properly from text document', async () => {
-    const stream = createReadStream(path.join(__dirname, '../../test-files/test.txt'));
-    const extracted = await textExtractor.extractText(stream, 'txt');
+    const readStream = createReadStream(path.join(__dirname, '../../test-files/test.txt'));
+    const bufferFromStream = await buffer(readStream);
+    const readable = Readable.from(bufferFromStream);
+    const extracted = await textExtractor.extractText(readable, 'txt');
     const {
       pages,
     } = extracted;
