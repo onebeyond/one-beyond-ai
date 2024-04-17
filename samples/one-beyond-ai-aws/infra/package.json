@@ -20,7 +20,7 @@
     "typescript": "~5.3.3"
   },
   "dependencies": {
-    "@one-beyond-ai/text-document-extractor": "^0.0.2",
+    "@one-beyond-ai/text-document-extractor": "^0.1.2",
     "@types/aws-lambda": "^8.10.137",
     "aws-cdk-lib": "2.133.0",
     "aws-sdk": "^2.1598.0",

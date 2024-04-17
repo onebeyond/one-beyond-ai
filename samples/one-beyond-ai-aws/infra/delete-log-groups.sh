@@ -1,0 +1,2 @@
+awslocal logs describe-log-groups --query 'logGroups[*].logGroupName' --output table | \
+awk '{print $2}' | grep ^/aws/lambda | while read x; do  echo "deleting $x" ; awslocal logs delete-log-group --log-group-name $x; done
