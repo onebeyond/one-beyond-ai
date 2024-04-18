@@ -1,0 +1,1 @@
+export const FileTypes = ["pdf", "docx", "txt"] as const;
