@@ -17,7 +17,7 @@ describe('tokenizer', () => {
   it('docSplitter work correctly', async () => {
     const tokenizer = new Tokenizer();
 
-    const result = await tokenizer.docSplitter(content);
+    const result = await tokenizer.splitDocument(content);
 
     expect(result.length).toEqual(8);
     expect(result[0].pageContent).toEqual(

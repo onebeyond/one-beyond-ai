@@ -63,7 +63,7 @@ export class Embed {
   }
 
   public async chunkText<T extends Chunk>(obj: T): Promise<T[]> {
-    const contents = await this.tokenizer.docSplitter(obj.text);
+    const contents = await this.tokenizer.splitDocument(obj.text);
     return contents.map((sc) => ({ ...obj, text: sc.pageContent }));
   }
 

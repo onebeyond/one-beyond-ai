@@ -23,7 +23,7 @@ export class Tokenizer {
     this.model = params?.model ?? 'gpt-3.5-turbo';
   }
 
-  public async docSplitter(content: string): Promise<Document<Record<string, any>>[]> {
+  public async splitDocument(content: string): Promise<Document<Record<string, any>>[]> {
     const splitter = new CharacterTextSplitter({
       separator: this.splitSeparator,
       chunkSize: this.splitChunkSize,
@@ -39,7 +39,7 @@ export class Tokenizer {
   }
 
   public async getDocTokens(content: string): Promise<number[][]> {
-    const splittedContent = await this.docSplitter(content);
+    const splittedContent = await this.splitDocument(content);
     return Promise.all(splittedContent.map((sc) => this.createTokens(sc.pageContent)));
   }
 }

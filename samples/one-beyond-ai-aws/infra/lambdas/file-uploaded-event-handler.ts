@@ -1,4 +1,5 @@
 import { TextExtractor } from '@one-beyond-ai/text-document-extractor';
+import { Tokenizer } from '@one-beyond-ai/tokenizer';
 import { SQSHandler, SQSEvent, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import * as mime from 'mime-types';
@@ -31,4 +32,11 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
   }
   assertIsFileTypeSupported(extension);
   const extractedText = await textExtractor.extractText(readable, extension);
+  const tokenizer = new Tokenizer({
+    model: 'text-embedding-ada-002',
+    splitChunkSize: 24000,
+    splitChunkOverlap: 12000,
+    splitSeparator: '\n',
+  });
+  const subDocs = await tokenizer.splitDocument(extractedText.pages[0].text);
 };

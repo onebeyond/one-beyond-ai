@@ -36,7 +36,7 @@ describe('Embed module', () => {
     vi.clearAllMocks();
     CostMock.prototype.getTokenCost.mockReturnValue(0.1);
     CostMock.prototype.getEmbeddingCost.mockReturnValue({ token: 0.1, total: 0.1, currency: "USD" });
-    TokenizerMock.prototype.docSplitter.mockImplementation((text: string) => [{ pageContent: text }] as any);
+    TokenizerMock.prototype.splitDocument.mockImplementation((text: string) => [{ pageContent: text }] as any);
     TokenizerMock.prototype.getDocTokens.mockResolvedValue([new Uint32Array([1, 2, 3])]);
     TextExtractorMock.prototype.extractText.mockResolvedValue({ pages: [{ text: "Hello World", pageNumber: 1 }] });
   });
@@ -63,7 +63,7 @@ describe('Embed module', () => {
   it("should chunk text", async () => {
     const result = await embed.chunkText({ text: "Hello World", key: "key" });
     expect(result).toEqual([{ text: "Hello World", key: "key" }]);
-    expect(TokenizerMock.prototype.docSplitter).toHaveBeenCalledWith("Hello World");
+    expect(TokenizerMock.prototype.splitDocument).toHaveBeenCalledWith("Hello World");
   });
 
   it("should embed chunks", async () => {
