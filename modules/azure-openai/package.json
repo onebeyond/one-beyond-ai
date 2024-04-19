@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/azure-openai",
-  "version": "0.1.41",
+  "version": "0.1.43",
   "dependencies": {
     "@azure/openai": "^1.0.0-beta.11",
     "@one-beyond-ai/common": "*"

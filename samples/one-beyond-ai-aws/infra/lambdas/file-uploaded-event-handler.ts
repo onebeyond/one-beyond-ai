@@ -30,10 +30,11 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
   if (!extension) {
     throw new Error('Unsupported file type');
   }
+
   assertIsFileTypeSupported(extension);
   const extractedText = await textExtractor.extractText(readable, extension);
+
   const tokenizer = new Tokenizer({
-    model: 'text-embedding-ada-002',
     splitChunkSize: 24000,
     splitChunkOverlap: 12000,
     splitSeparator: '\n',

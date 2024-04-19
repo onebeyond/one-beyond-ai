@@ -8,15 +8,10 @@ import { NodejsFunction, OutputFormat } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { getResourceName } from '../util';
 import { SnsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
+import { assertEnvironmentVariable } from '@one-beyond-ai/common';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import 'dotenv/config'
 const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } = process.env;
-
-function assertEnvironmentVariable (variable: string | undefined, name: string): asserts variable is string {
-  if (!variable) {
-    throw new Error(`Environment variable ${name} is not set`);
-  }
-}
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {

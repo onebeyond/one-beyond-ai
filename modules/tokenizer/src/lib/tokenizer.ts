@@ -3,6 +3,8 @@ import { CharacterTextSplitter } from 'langchain/text_splitter';
 import { encodingForModel } from "js-tiktoken";
 import { TokenizerModel } from "@one-beyond-ai/common";
 
+const DEFAULT_MODEL = 'gpt-3.5-turbo';
+
 type TokenizerParams = {
   splitSeparator?: string;
   splitChunkSize?: number;
@@ -14,13 +16,11 @@ export class Tokenizer {
   private splitSeparator;
   private splitChunkSize;
   private splitChunkOverlap;
-  private model: TokenizerModel;
 
   constructor(params?: TokenizerParams) {
     this.splitSeparator = params?.splitSeparator ?? '\n';
     this.splitChunkSize = params?.splitChunkSize ?? 100;
     this.splitChunkOverlap = params?.splitChunkOverlap ?? 3;
-    this.model = params?.model ?? 'gpt-3.5-turbo';
   }
 
   public async splitDocument(content: string): Promise<Document<Record<string, any>>[]> {
@@ -29,17 +29,16 @@ export class Tokenizer {
       chunkSize: this.splitChunkSize,
       chunkOverlap: this.splitChunkOverlap,
     });
-
     return splitter.createDocuments([content]);
   }
 
-  public async createTokens(content: string): Promise<number[]> {
-    const encoder = encodingForModel(this.model);
+  public async createTokens(content: string, model: TokenizerModel = DEFAULT_MODEL): Promise<number[]> {
+    const encoder = encodingForModel(model);
     return encoder.encode(content);
   }
 
-  public async getDocTokens(content: string): Promise<number[][]> {
+  public async getDocTokens(content: string, model: TokenizerModel = DEFAULT_MODEL): Promise<number[][]> {
     const splittedContent = await this.splitDocument(content);
-    return Promise.all(splittedContent.map((sc) => this.createTokens(sc.pageContent)));
+    return Promise.all(splittedContent.map((sc) => this.createTokens(sc.pageContent, model)));
   }
 }

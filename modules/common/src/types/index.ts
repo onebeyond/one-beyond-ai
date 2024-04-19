@@ -6,3 +6,4 @@ export * from './completion';
 export * from './embedding';
 export * from './cost';
 export * from './text-extractor';
+export * from './tokenizer';
