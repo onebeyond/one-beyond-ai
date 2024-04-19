@@ -2,6 +2,7 @@ import { TextExtractor } from '@one-beyond-ai/text-document-extractor';
 import { Tokenizer } from '@one-beyond-ai/tokenizer';
 import { SQSHandler, SQSEvent, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 import * as mime from 'mime-types';
 import { assertIsFileTypeSupported } from "@one-beyond-ai/common";
 
@@ -40,4 +41,12 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     splitSeparator: '\n',
   });
   const subDocs = await tokenizer.splitDocument(extractedText.pages[0].text);
+
+  const snsClient = new SNSClient({ region: process.env.REGION });
+  for (const subDoc of subDocs) {
+    snsClient.send(new PublishCommand({
+      TopicArn: process.env.TEXT_EMBED_TOPIC_ARN,
+      Message: JSON.stringify(subDoc),
+    }));
+  }
 };

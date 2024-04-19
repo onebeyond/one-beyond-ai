@@ -9,9 +9,11 @@ import { getResourceName } from '../util';
 import { SnsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { assertEnvironmentVariable } from '@one-beyond-ai/common';
-import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as LambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import 'dotenv/config'
-const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } = process.env;
+const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, EMBEDDING_MODEL } = process.env;
+
+const banner = "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);";
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -20,14 +22,21 @@ export class InfraStack extends cdk.Stack {
     assertEnvironmentVariable(S3_ENDPOINT, 'S3_ENDPOINT');
     assertEnvironmentVariable(S3_ACCESS_KEY_ID, 'S3_ACCESS_KEY_ID');
     assertEnvironmentVariable(S3_SECRET_ACCESS_KEY, 'S3_SECRET_ACCESS_KEY');
+    assertEnvironmentVariable(EMBEDDING_MODEL, 'EMBEDDING_MODEL');
 
     const bucket = new s3.Bucket(this, getResourceName('FileBucket'), {
       bucketName: 'file-bucket',
     });
-    const topic = new sns.Topic(this, getResourceName('FilePutEventTopic'), {
+
+    const filePutEventTopic = new sns.Topic(this, getResourceName('FilePutEventTopic'), {
       topicName: getResourceName('FilePutEventTopic'),
     });
-    const lambda = new NodejsFunction(this, getResourceName('FileUploadedEventHandler'), {
+
+    const textEmbedTopic = new sns.Topic(this, getResourceName('textEmbedTopic'), {
+      topicName: getResourceName('textEmbedTopic'),
+    });
+
+    const fileUploadedEventHandlerLambda = new NodejsFunction(this, getResourceName('FileUploadedEventHandler'), {
       functionName: getResourceName('FileUploadedEventHandler'),
       runtime: Runtime.NODEJS_20_X,
       entry: 'lambdas/file-uploaded-event-handler.ts',
@@ -35,43 +44,73 @@ export class InfraStack extends cdk.Stack {
         format: OutputFormat.ESM,
         mainFields: ['module', 'main'],
         target: 'esnext',
-        banner: "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);",
+        banner,
       },
       environment: {
         REGION,
         S3_ENDPOINT,
         S3_ACCESS_KEY_ID,
         S3_SECRET_ACCESS_KEY,
+        TEXT_EMBED_TOPIC_ARN: textEmbedTopic.topicArn,
       },
     });
 
-    bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(topic));
+    const textEmbedEventHandlerLambda = new NodejsFunction(this, getResourceName('TextEmbedEventHandler'), {
+      functionName: getResourceName('TextEmbedEventHandler'),
+      runtime: Runtime.NODEJS_20_X,
+      entry: 'lambdas/text-embedder.ts',
+      bundling: {
+        format: OutputFormat.ESM,
+        mainFields: ['module', 'main'],
+        target: 'esnext',
+        banner,
+      },
+      environment: {
+        EMBEDDING_MODEL,
+      },
+    });
 
-    const queue = new sqs.Queue(this, getResourceName('FileUploadedEventQueue'), {
+    bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(filePutEventTopic));
+
+    const filePutEventQueue = new sqs.Queue(this, getResourceName('FileUploadedEventQueue'), {
       queueName: getResourceName('FileUploadedEventQueue'),
       visibilityTimeout: cdk.Duration.seconds(120),
     });
 
-    const subscription = new SqsSubscription(queue);
-    topic.addSubscription(subscription);
+    const textEmbedEventQueue = new sqs.Queue(this, getResourceName('TextEmbedEventQueue'), {
+      queueName: getResourceName('TextEmbedEventQueue'),
+      visibilityTimeout: cdk.Duration.seconds(120),
+    });
 
-    const eventSource = new lambdaEventSources.SqsEventSource(queue, {
+    const filePutEventSubscription = new SqsSubscription(filePutEventQueue);
+    filePutEventTopic.addSubscription(filePutEventSubscription);
+
+    const textEmbedEventSubscription = new SqsSubscription(textEmbedEventQueue);
+    textEmbedTopic.addSubscription(textEmbedEventSubscription);
+
+    const fileUploadedEventSource = new LambdaEventSources.SqsEventSource(filePutEventQueue, {
       batchSize: 1,
       maxConcurrency: 5,
     });
-    lambda.addEventSource(eventSource);
+    fileUploadedEventHandlerLambda.addEventSource(fileUploadedEventSource);
+
+    const textEmbedEventSource = new LambdaEventSources.SqsEventSource(textEmbedEventQueue, {
+      batchSize: 1,
+      maxConcurrency: 5,
+    });
+    textEmbedEventHandlerLambda.addEventSource(textEmbedEventSource);
 
     new cdk.CfnOutput(this, getResourceName('FilePutEventTopicArn'), {
-      value: topic.topicArn,
+      value: filePutEventTopic.topicArn,
     });
     new cdk.CfnOutput(this, getResourceName('FileUploadedEventQueueArn'), {
-      value: queue.queueArn,
+      value: filePutEventQueue.queueArn,
     });
     new cdk.CfnOutput(this, getResourceName('FileUploadedEventQueueUrl'), {
-      value: queue.queueUrl,
+      value: filePutEventQueue.queueUrl,
     });
-    new cdk.CfnOutput(this, getResourceName('FileUploadHandlerArn'), {
-      value: lambda.functionArn,
+    new cdk.CfnOutput(this, getResourceName('FileUploadedEventHandlerArn'), {
+      value: fileUploadedEventHandlerLambda.functionArn,
     });
     new cdk.CfnOutput(this, getResourceName('sBucketArn'), {
       value: bucket.bucketArn,

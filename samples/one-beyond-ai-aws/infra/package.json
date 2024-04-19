@@ -21,6 +21,7 @@
     "typescript": "~5.3.3"
   },
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.556.0",
     "@one-beyond-ai/common": "^0.1.42",
     "@one-beyond-ai/text-document-extractor": "^0.1.42",
     "@one-beyond-ai/tokenizer": "^0.1.42",
