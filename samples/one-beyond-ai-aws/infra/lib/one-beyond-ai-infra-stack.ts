@@ -9,10 +9,22 @@ import { getResourceName } from '../util';
 import { SnsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
+import 'dotenv/config'
+const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY } = process.env;
+
+function assertEnvironmentVariable (variable: string | undefined, name: string): asserts variable is string {
+  if (!variable) {
+    throw new Error(`Environment variable ${name} is not set`);
+  }
+}
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+    assertEnvironmentVariable(REGION, 'REGION');
+    assertEnvironmentVariable(S3_ENDPOINT, 'S3_ENDPOINT');
+    assertEnvironmentVariable(S3_ACCESS_KEY_ID, 'S3_ACCESS_KEY_ID');
+    assertEnvironmentVariable(S3_SECRET_ACCESS_KEY, 'S3_SECRET_ACCESS_KEY');
 
     const bucket = new s3.Bucket(this, getResourceName('FileBucket'), {
       bucketName: 'file-bucket',
@@ -29,7 +41,13 @@ export class InfraStack extends cdk.Stack {
         mainFields: ['module', 'main'],
         target: 'esnext',
         banner: "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);",
-      }
+      },
+      environment: {
+        REGION,
+        S3_ENDPOINT,
+        S3_ACCESS_KEY_ID,
+        S3_SECRET_ACCESS_KEY,
+      },
     });
 
     bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new SnsDestination(topic));

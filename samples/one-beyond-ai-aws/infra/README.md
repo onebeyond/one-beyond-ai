@@ -10,7 +10,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `npm install`    spin up localstack
 * `npm install -g aws-cdk-local aws-cdk`    install cdk and cdklocal
 * `pip install awscli-local`    install awslocal command
-* `aws configure`    configure aws env locally - key: dummy, secret: dummy, region: eu-west-1, output: json
+* `aws configure`    configure aws env locally - key: fake, secret: fake, region: eu-west-1, output: json
 * `npm run watch`    watch for changes and compile
 * `npm run test`     perform the jest unit tests
 * `cdklocal bootstrap`  deploy this stack to your default AWS account/region locally
