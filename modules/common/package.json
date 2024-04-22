@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/common",
-  "version": "0.1.46",
+  "version": "0.1.47",
   "dependencies": {
     "tslib": "^2.3.0"
   },

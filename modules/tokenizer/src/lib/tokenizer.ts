@@ -28,6 +28,7 @@ export class Tokenizer {
 
   public async splitDocument(
     content: string,
+    originalDocument?: string
   ): Promise<Document<Record<string, any>>[]> {
     const lengthFunction = async (text: string) => (await this.createTokens(text)).length;
 
@@ -37,7 +38,14 @@ export class Tokenizer {
       chunkOverlap: this.splitChunkOverlap,
       lengthFunction,
     });
-    return recSplitter.createDocuments([content]);
+    const documents = await recSplitter.createDocuments([content]);
+    return documents.map((doc) => ({
+      ...doc,
+      metadata: {
+        ...doc.metadata,
+        originalDocument,
+      },
+    }));
   }
 
   public async createTokens(content: string): Promise<number[]> {

@@ -11,7 +11,7 @@ import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { assertEnvironmentVariable } from '@one-beyond-ai/common';
 import * as LambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import 'dotenv/config'
-const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, EMBEDDING_MODEL } = process.env;
+const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, EMBEDDING_MODEL, AZURE_OPENAI_API_KEY } = process.env;
 
 const banner = "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);";
 
@@ -23,6 +23,7 @@ export class InfraStack extends cdk.Stack {
     assertEnvironmentVariable(S3_ACCESS_KEY_ID, 'S3_ACCESS_KEY_ID');
     assertEnvironmentVariable(S3_SECRET_ACCESS_KEY, 'S3_SECRET_ACCESS_KEY');
     assertEnvironmentVariable(EMBEDDING_MODEL, 'EMBEDDING_MODEL');
+    assertEnvironmentVariable(AZURE_OPENAI_API_KEY, 'AZURE_OPENAI_API_KEY');
 
     const bucket = new s3.Bucket(this, getResourceName('FileBucket'), {
       bucketName: 'file-bucket',
@@ -40,6 +41,7 @@ export class InfraStack extends cdk.Stack {
       functionName: getResourceName('FileUploadedEventHandler'),
       runtime: Runtime.NODEJS_20_X,
       entry: 'lambdas/file-uploaded-event-handler.ts',
+      timeout: cdk.Duration.seconds(30),
       bundling: {
         format: OutputFormat.ESM,
         mainFields: ['module', 'main'],
@@ -52,6 +54,7 @@ export class InfraStack extends cdk.Stack {
         S3_ACCESS_KEY_ID,
         S3_SECRET_ACCESS_KEY,
         TEXT_EMBED_TOPIC_ARN: textEmbedTopic.topicArn,
+        EMBEDDING_MODEL,
       },
     });
 
@@ -67,6 +70,7 @@ export class InfraStack extends cdk.Stack {
       },
       environment: {
         EMBEDDING_MODEL,
+        AZURE_OPENAI_API_KEY,
       },
     });
 
