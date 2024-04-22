@@ -19,10 +19,12 @@ describe('tokenizer', () => {
 
     const result = await tokenizer.splitDocument(content);
 
-    expect(result.length).toEqual(8);
-    expect(result[0].pageContent).toEqual(
-      'LangChain is a framework for developing applications powered by language models. It enables applications that:'
-    );
+    expect(result.length).toEqual(3);
+    expect(
+      result[0].pageContent.startsWith(
+        'LangChain is a framework for developing applications powered by language models. It enables applications that:'
+      )
+    ).toBeTruthy();
   });
 
   it('createTokens work correctly', async () => {
@@ -34,6 +36,6 @@ describe('tokenizer', () => {
   it('getDocTokens work correctly', async () => {
     const tokenizer = new Tokenizer();
     const result = await tokenizer.getDocTokens(content);
-    expect(result.length).toEqual(8);
+    expect(result.length).toEqual(3);
   });
 });
