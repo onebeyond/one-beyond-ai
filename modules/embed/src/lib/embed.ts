@@ -11,6 +11,7 @@ import { Cost } from "@one-beyond-ai/cost";
 import { TextExtractor } from "@one-beyond-ai/text-document-extractor";
 import { Tokenizer } from "@one-beyond-ai/tokenizer";
 import { ReadStream } from "fs";
+import { Readable } from "stream";
 
 export type EmbedOptions = {
   concurrency?: number;
@@ -72,9 +73,13 @@ export class Embed {
     return concurrentRunner(promises, this.options?.concurrency ?? 1);
   }
 
+  public async getChunks(readable: Readable, fileType: FileType): Promise<ExtractedPage[][]> {
+    const document = await this.textExtractor.extractText(readable, fileType);
+    return Promise.all(document.pages.map((page) => this.chunkText(page)));
+  }
+
   public async embedDocument(stream: ReadStream, fileType: FileType, options?: EmbeddingOptions): Promise<Array<ExtractedPage & EmbeddingResult>> {
-    const document = await this.textExtractor.extractText(stream, fileType);
-    const chunks = await Promise.all(document.pages.map((page) => this.chunkText(page)));
+    const chunks = await this.getChunks(stream, fileType);
     return this.embedChunks(chunks.flat(), options);
   }
 
