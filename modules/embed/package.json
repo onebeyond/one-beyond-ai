@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/embed",
-  "version": "0.1.47",
+  "version": "0.1.50",
   "main": "./index.js",
   "module": "./index.mjs",
   "typings": "./index.d.ts",

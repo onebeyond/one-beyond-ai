@@ -9,10 +9,10 @@ export type TokenizerModel = typeof TokenizerModels[number];
 export type OldTokenizerModel = typeof OldTokenizerModels[number];
 
 export type ModelParams = {
-  tokenCost: number;
-  completionCost: number;
-  contextSize: number;
-  currency: string;
+  tokenCost?: number;
+  completionCost?: number;
+  contextSize?: number;
+  currency?: string;
   tokenizerModel: TokenizerModel;
 }
 

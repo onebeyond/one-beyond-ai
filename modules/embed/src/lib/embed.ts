@@ -65,7 +65,7 @@ export class Embed {
 
   public async chunkText<T extends Chunk>(obj: T): Promise<T[]> {
     const contents = await this.tokenizer.splitDocument(obj.text);
-    return contents.map((sc) => ({ ...obj, text: sc.pageContent }));
+    return contents.map((sc) => ({ ...obj, text: sc.text }));
   }
 
   public async embedChunks<T extends Chunk>(chunks: T[], options?: EmbeddingOptions): Promise<Array<T & EmbeddingResult>> {
@@ -100,6 +100,6 @@ export class Embed {
     const tokens = await this.tokenizer.getDocTokens(input);
     const tokenCount = tokens.reduce((acc, t) => acc + t.length, 0);
     const cost = this.cost.getTokenCost(tokenCount);
-    return { token: cost, total: cost, currency: this.client.options.currency };
+    return { token: cost, total: cost, currency: this.client.options.currency ?? '' };
   }
 }

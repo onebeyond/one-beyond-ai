@@ -21,7 +21,7 @@ describe('tokenizer', () => {
 
     expect(result.length).toEqual(3);
     expect(
-      result[0].pageContent.startsWith(
+      result[0].text.startsWith(
         'LangChain is a framework for developing applications powered by language models. It enables applications that:'
       )
     ).toBeTruthy();

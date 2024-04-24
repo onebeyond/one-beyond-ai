@@ -36,7 +36,7 @@ describe('Embed module', () => {
     vi.clearAllMocks();
     CostMock.prototype.getTokenCost.mockReturnValue(0.1);
     CostMock.prototype.getEmbeddingCost.mockReturnValue({ token: 0.1, total: 0.1, currency: "USD" });
-    TokenizerMock.prototype.splitDocument.mockImplementation((text: string) => [{ pageContent: text }] as any);
+    TokenizerMock.prototype.splitDocument.mockImplementation((text: string) => [{ text }] as any);
     TokenizerMock.prototype.getDocTokens.mockResolvedValue([new Uint32Array([1, 2, 3])]);
     TextExtractorMock.prototype.extractText.mockResolvedValue({ pages: [{ text: "Hello World", pageNumber: 1 }] });
   });

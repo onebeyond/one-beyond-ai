@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/text-document-extractor",
-  "version": "0.1.47",
+  "version": "0.1.50",
   "dependencies": {
     "langchain": "^0.1.26",
     "mammoth": "^1.7.0",

@@ -1,10 +1,8 @@
-import { Document } from 'langchain/document';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { encodingForModel } from 'js-tiktoken';
-import { TokenizerModel, assertIsModelTiktokenSupported } from '@one-beyond-ai/common';
+import { TokenizerDocument, TokenizerModel, assertIsModelTiktokenSupported, NewGenerationTokenizerModels } from '@one-beyond-ai/common';
 
 const DEFAULT_MODEL = 'gpt-3.5-turbo';
-const NEW_GENERATION_MODELS = ["text-embedding-3-small", "text-embedding-3-large"];
 
 type TokenizerParams = {
   splitSeparator?: string;
@@ -29,7 +27,7 @@ export class Tokenizer {
   public async splitDocument(
     content: string,
     originalDocument?: string
-  ): Promise<Document<Record<string, any>>[]> {
+  ): Promise<TokenizerDocument[]> {
     const lengthFunction = async (text: string) => (await this.createTokens(text)).length;
 
     const recSplitter = new RecursiveCharacterTextSplitter({
@@ -39,19 +37,21 @@ export class Tokenizer {
       lengthFunction,
     });
     const documents = await recSplitter.createDocuments([content]);
-    return documents.map((doc) => ({
+    return documents.map((doc) => {
+      return {
       ...doc,
+      text: doc.pageContent,
       metadata: {
         ...doc.metadata,
         originalDocument,
       },
-    }));
+    }});
   }
 
   public async createTokens(content: string): Promise<number[]> {
     // since 'text-embedding-3-small' and 'text-embedding-3-large' are not supported by js-tiktoken, but
     // clk 100 based models are, we use ada 2 as a fallback
-    const model = NEW_GENERATION_MODELS.includes(this.model) ? 'text-embedding-ada-002' : this.model;
+    const model = NewGenerationTokenizerModels.includes(this.model) ? 'text-embedding-ada-002' : this.model;
     assertIsModelTiktokenSupported(model);
     const encoder = encodingForModel(model);
     return encoder.encode(content);
@@ -59,6 +59,6 @@ export class Tokenizer {
 
   public async getDocTokens(content: string): Promise<number[][]> {
     const splittedContent = await this.splitDocument(content);
-    return Promise.all(splittedContent.map((sc) => this.createTokens(sc.pageContent)));
+    return Promise.all(splittedContent.map((sc) => this.createTokens(sc.text)));
   }
 }

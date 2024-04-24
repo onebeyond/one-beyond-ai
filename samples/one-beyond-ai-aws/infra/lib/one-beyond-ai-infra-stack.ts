@@ -10,10 +10,21 @@ import { SnsDestination } from 'aws-cdk-lib/aws-s3-notifications';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 import { assertEnvironmentVariable } from '@one-beyond-ai/common';
 import * as LambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
-import 'dotenv/config'
-const { REGION, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, EMBEDDING_MODEL, AZURE_OPENAI_API_KEY } = process.env;
+import 'dotenv/config';
+const {
+  REGION,
+  S3_ENDPOINT,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
+  EMBEDDING_MODEL,
+  AZURE_OPENAI_API_KEY,
+  AZURE_OPENAI_API_VERSION,
+  AZURE_OPENAI_API_ENDPOINT,
+  AZURE_OPENAI_DEPLOYMENT_NAME,
+} = process.env;
 
-const banner = "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);";
+const banner =
+  "import path from 'path'; import { fileURLToPath } from 'url'; import { createRequire } from 'module';const require = createRequire(import.meta.url); const __filename = fileURLToPath(import.meta.url); const __dirname = path.dirname(__filename);";
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -24,6 +35,9 @@ export class InfraStack extends cdk.Stack {
     assertEnvironmentVariable(S3_SECRET_ACCESS_KEY, 'S3_SECRET_ACCESS_KEY');
     assertEnvironmentVariable(EMBEDDING_MODEL, 'EMBEDDING_MODEL');
     assertEnvironmentVariable(AZURE_OPENAI_API_KEY, 'AZURE_OPENAI_API_KEY');
+    assertEnvironmentVariable(AZURE_OPENAI_API_VERSION, 'AZURE_OPENAI_API_VERSION');
+    assertEnvironmentVariable(AZURE_OPENAI_API_ENDPOINT, 'AZURE_OPENAI_API_ENDPOINT');
+    assertEnvironmentVariable(AZURE_OPENAI_DEPLOYMENT_NAME, 'AZURE_OPENAI_DEPLOYMENT_NAME');
 
     const bucket = new s3.Bucket(this, getResourceName('FileBucket'), {
       bucketName: 'file-bucket',
@@ -62,6 +76,7 @@ export class InfraStack extends cdk.Stack {
       functionName: getResourceName('TextEmbedEventHandler'),
       runtime: Runtime.NODEJS_20_X,
       entry: 'lambdas/text-embedder.ts',
+      timeout: cdk.Duration.seconds(30),
       bundling: {
         format: OutputFormat.ESM,
         mainFields: ['module', 'main'],
@@ -71,6 +86,9 @@ export class InfraStack extends cdk.Stack {
       environment: {
         EMBEDDING_MODEL,
         AZURE_OPENAI_API_KEY,
+        AZURE_OPENAI_API_VERSION,
+        AZURE_OPENAI_API_ENDPOINT,
+        AZURE_OPENAI_DEPLOYMENT_NAME,
       },
     });
 
