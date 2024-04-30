@@ -25,6 +25,12 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `awslocal cloudformation delete-stack --stack-name localOneBeyondAIInfraStack` To delete a stack
 * `awslocal cloudformation describe-stacks` To list stacks
 * `awslocal sns publish --topic-arn arn:aws:sns:eu-west-1:000000000000:localOneBeyondAIInfraFilePutEventTopic --message=hellohello` To test sns publish
+* `docker network create elastic` to create elastic docker network
+* `docker pull docker.elastic.co/elasticsearch/elasticsearch:8.13.2` to pull elasticsearch docker image
+* `docker run --name elasticsearch --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -t docker.elastic.co/elasticsearch/elasticsearch:8.13.2` to run the elastic container
+* `docker pull docker.elastic.co/kibana/kibana:8.13.2` to pull kibana
+* `docker run --name kibana --net elastic -p 5601:5601 docker.elastic.co/kibana/kibana:8.13.2` to run kibana
+* `npx ts-node ./scripts/create-elastic-index.ts` to create your elastic index
 
 ## Useful commands
 * `npm run watch`   watch for changes and compile

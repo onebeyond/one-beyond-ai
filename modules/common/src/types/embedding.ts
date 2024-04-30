@@ -1,3 +1,5 @@
+import { EmbeddingCost } from ".";
+
 export type EmbeddingOptions = {
   user?: string;
   model?: string;
@@ -15,4 +17,12 @@ export type EmbeddingItem = {
 export type Embedding = {
   data: EmbeddingItem[];
   usage: EmbeddingUsage;
+}
+
+export type Chunk = {
+  text: string;
+}
+
+export type EmbeddingResult = Embedding & {
+  cost: EmbeddingCost;
 }

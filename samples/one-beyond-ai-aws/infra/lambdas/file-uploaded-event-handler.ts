@@ -4,20 +4,37 @@ import { SQSHandler, SQSEvent, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
 import * as mime from 'mime-types';
-import { MaxTokens, assertIsFileTypeSupported, assertIsModelSupported } from '@one-beyond-ai/common';
+import { MaxTokens, assertEnvironmentVariable, assertIsFileTypeSupported, assertIsModelSupported } from '@one-beyond-ai/common';
 import { extractSqsMessage } from '../util';
 
+const {
+  REGION,
+  S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY,
+  S3_ENDPOINT,
+  EMBEDDING_MODEL,
+  TEXT_EMBED_TOPIC_ARN,
+} = process.env;
+
+assertEnvironmentVariable(REGION, 'REGION');
+assertEnvironmentVariable(S3_ACCESS_KEY_ID, 'S3_ACCESS_KEY_ID');
+assertEnvironmentVariable(S3_SECRET_ACCESS_KEY, 'S3_SECRET_ACCESS_KEY');
+assertEnvironmentVariable(S3_ENDPOINT, 'S3_ENDPOINT');
+
 const s3 = new S3({
-  region: process.env.REGION,
-  accessKeyId: process.env.S3_ACCESS_KEY_ID,
-  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  endpoint: process.env.S3_ENDPOINT,
+  region: REGION,
+  accessKeyId: S3_ACCESS_KEY_ID,
+  secretAccessKey: S3_SECRET_ACCESS_KEY,
+  endpoint: S3_ENDPOINT,
   s3ForcePathStyle: true,
 });
 const textExtractor = new TextExtractor();
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
-  const model = process.env.EMBEDDING_MODEL;
+  assertEnvironmentVariable(EMBEDDING_MODEL, 'EMBEDDING_MODEL');
+  assertEnvironmentVariable(TEXT_EMBED_TOPIC_ARN, 'TEXT_EMBED_TOPIC_ARN');
+
+  const model = EMBEDDING_MODEL;
 
   assertIsModelSupported(model);
   const s3Event = extractSqsMessage<S3Event>(event);
@@ -45,13 +62,13 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     splitChunkOverlap: (MaxTokens[model] ?? 0) / 2,
   });
 
+  const snsClient = new SNSClient({ region: REGION });
   for (const page of extractedText.pages) {
     const chunks = await tokenizer.splitDocument(page.text, originalDocument);
-    const snsClient = new SNSClient({ region: process.env.REGION });
     for (const chunk of chunks) {
       await snsClient.send(
         new PublishCommand({
-          TopicArn: process.env.TEXT_EMBED_TOPIC_ARN,
+          TopicArn: TEXT_EMBED_TOPIC_ARN,
           Message: JSON.stringify(chunk),
         })
       );

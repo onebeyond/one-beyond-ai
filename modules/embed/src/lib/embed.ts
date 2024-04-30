@@ -1,9 +1,10 @@
 import {
   AIClient,
+  Chunk,
   concurrentRunner,
-  Embedding,
   EmbeddingCost,
   EmbeddingOptions,
+  EmbeddingResult,
   ExtractedPage,
   FileType
 } from "@one-beyond-ai/common";
@@ -27,14 +28,6 @@ const defaultOptions: EmbedOptions = {
   splitSeparator: '\n',
   splitChunkSize: 10000,
   splitChunkOverlap: 1000,
-}
-
-export type Chunk = {
-  text: string;
-}
-
-export type EmbeddingResult = Embedding & {
-  cost: EmbeddingCost;
 }
 
 export class Embed {
