@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChatCompletionCreateParams,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionSystemMessageParam,
+  ChatCompletionChunk
 } from "openai/src/resources/chat/completions";
 import {
   AudioTranscriptionResultVerboseJson,
@@ -10,10 +12,14 @@ import {
   ChatRequestAssistantMessage, ChatRequestFunctionMessage,
   ChatRequestMessage,
   ChatRequestSystemMessage, ChatRequestToolMessage,
-  ChatRequestUserMessage, ChatResponseMessage, ChatRole, ChatRoles, CompletionUsage, EmbeddingUsage
+  ChatRequestUserMessage, ChatResponseMessage, ChatRole, ChatRoles, CompletionUsage, EmbeddingUsage,
+  FunctionCall,
+  FunctionType
 } from "@one-beyond-ai/common";
+
 import { CompletionUsage as OpenAICompletionUsage } from "openai/src/resources/completions";
 import { CreateEmbeddingResponse } from "openai/src/resources/embeddings";
+import { ChatCompletionMessageToolCall } from "openai/resources";
 
 
 export const mapChatRequestSystemMessage = (message: ChatRequestSystemMessage): ChatCompletionSystemMessageParam => {
@@ -83,20 +89,31 @@ export const mapUsage = (usage?: OpenAICompletionUsage): CompletionUsage => {
   };
 }
 
-export const mapRole = (role: string): ChatRole => {
+export const mapRole = (role?: string): ChatRole => {
   if (ChatRoles.includes(role as ChatRole)) return role as ChatRole;
   return "assistant";
 }
 
-export const mapCompletionResponseMessage = (message?: ChatCompletionMessage): ChatResponseMessage | undefined => {
+export const mapFunctionCall = (functionCall?: ChatCompletionChunk.Choice.Delta.FunctionCall | ChatCompletionMessage["function_call"]): ChatResponseMessage["functionCall"]  => {
+  return {
+    name: functionCall?.name || "",
+    arguments: functionCall?.arguments || "",
+  }
+}
+
+export const mapCompletionResponseMessage = (message?: ChatCompletionMessage | ChatCompletionChunk.Choice.Delta): ChatResponseMessage | undefined => {
   if (!message) {
     return undefined;
   }
   return {
     role: mapRole(message.role),
-    content: message.content,
-    functionCall: message.function_call,
-    toolCalls: message.tool_calls ?? []
+    content: message?.content || null,
+    functionCall: mapFunctionCall(message?.function_call),
+    toolCalls: (message?.tool_calls ?? []).map((toolCall: ChatCompletionMessageToolCall |ChatCompletionChunk.Choice.Delta.ToolCall) => ({
+      id: toolCall?.id || "",
+      type: FunctionType.FUNCTION,
+      function: mapFunctionCall(toolCall.function) as FunctionCall,
+    })),
   };
 }
 
@@ -118,7 +135,7 @@ export const mapResponseFormat = (responseFormat?: ChatCompletionOptions["respon
 }
 
 export const mapChatCompletionOptions = (options?: ChatCompletionOptions): Omit<ChatCompletionCreateParams, "messages" | "model"> | undefined => {
-  if(!options) return;
+  if (!options) return;
   return {
     functions: options.functions,
     function_call: options.functionCall,

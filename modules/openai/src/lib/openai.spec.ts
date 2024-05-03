@@ -157,4 +157,57 @@ describe('OpenAI Client', () => {
       });
     });
   });
+
+
+  describe("getChatCompletionEvents", () => {
+    it("should call openai client completion function with stream option", async () => {
+      const client = new OpenAIClient(clientOptions);
+      const messages: ChatRequestMessage[] = [
+        {
+          role: "user",
+          content: 'What is the capital of France?',
+        }
+      ];
+      const completionStream = new PassThrough();
+      completionCreateMock.mockResolvedValue(completionStream);
+      const completionPromise = client.getChatCompletionEvents(messages);
+      completionStream.write({
+        choices: [{
+          message: {
+            role: "assistant",
+            content: "Paris",
+          },
+          finish_reason: "stop"
+        }],
+        usage: {
+          completion_tokens: 0,
+          prompt_tokens: 0,
+          total_tokens: 0
+        }
+      });
+      completionStream.end();
+      const result = await completionPromise.next();
+      expect(result.value).toEqual({
+        choices: [{
+          message: {
+            role: "assistant",
+            content: "Paris",
+            functionCall: undefined,
+            toolCalls: [],
+          },
+          finishReason: "stop"
+        }],
+        usage: {
+          completionTokens: 0,
+          promptTokens: 0,
+          totalTokens: 0
+        }
+      });
+      expect(completionCreateMock).toHaveBeenCalledWith({
+        messages: messages,
+        model: clientOptions.model,
+        stream: true,
+      });
+    });
+  })
 });

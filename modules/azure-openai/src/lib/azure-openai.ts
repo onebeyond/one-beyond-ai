@@ -37,6 +37,20 @@ export class AzureOpenAIClient implements AIClient {
     };
   }
 
+  public async *getChatCompletionEvents(messages: ChatRequestMessage[], options?: ChatCompletionOptions): AsyncGenerator<ChatCompletion, void, void> {
+    const stream = await this.client.streamChatCompletions(this.options.deploymentName, messages, mapChatCompletionOptions(options));
+    for await (const event of stream) {
+      yield {
+        choices: event.choices.map((choice) => ({
+          message: mapMessage(choice.message),
+          delta: mapMessage(choice.delta),
+          finishReason: mapFinishReason(choice.finishReason)
+        })),
+        usage: mapUsage(event.usage)
+      }
+    }
+  }
+
   public async getEmbeddings(input: string[], options?: EmbeddingOptions): Promise<Embedding> {
     return this.client.getEmbeddings(this.options.deploymentName, input, options);
   }

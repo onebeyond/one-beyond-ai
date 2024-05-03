@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const ChatRoles = ["system", "user", "assistant", "function", "tool"] as const;
 export type ChatRole = typeof ChatRoles[number];
 
 export const CompletionFinishReasons = ["stop", "length", "content_filter", "function_call", "tool_calls"] as const;
 export type CompletionFinishReason = typeof CompletionFinishReasons[number];
 
+export enum FunctionType {
+  FUNCTION = "function",
+}
+
 export type ChatCompletionsFunctionToolCall = {
-  type: "function";
+  type: FunctionType.FUNCTION;
   function: FunctionCall;
   id: string;
 }
