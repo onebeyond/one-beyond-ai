@@ -135,7 +135,7 @@ describe('Azure OpenAI Client', () => {
   describe("getChatCompletionEvents", () => {
     it("should call azure openai client streamChatCompletions", async () => {
       const spy = vi.spyOn(OpenAIClient.prototype, 'streamChatCompletions');
-      spy.mockResolvedValue({
+      spy.mockResolvedValue([{
         choices: [{
           message: {
             role: "assistant",
@@ -148,7 +148,7 @@ describe('Azure OpenAI Client', () => {
           promptTokens: 0,
           totalTokens: 0
         }
-      } as unknown as EventStream<ChatCompletions>);
+      }] as unknown as EventStream<ChatCompletions>);
       const client = new AzureOpenAIClient(clientOptions);
       const messages: ChatRequestMessage[] = [
         {

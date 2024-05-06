@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatRequestMessage, OpenAIClientParams } from "@one-beyond-ai/common";
 import { OpenAIClient } from "./openai";
 import { ChatCompletion } from "openai/resources/chat/completions";
@@ -82,7 +83,10 @@ describe('OpenAI Client', () => {
           message: {
             role: "assistant",
             content: "Paris",
-            functionCall: undefined,
+            functionCall: {
+              arguments: "",
+              name: "",
+            },
             toolCalls: [],
           },
           finishReason: "stop"
@@ -168,12 +172,11 @@ describe('OpenAI Client', () => {
           content: 'What is the capital of France?',
         }
       ];
-      const completionStream = new PassThrough();
-      completionCreateMock.mockResolvedValue(completionStream);
-      const completionPromise = client.getChatCompletionEvents(messages);
+
+      const completionStream = new PassThrough({objectMode: true});
       completionStream.write({
         choices: [{
-          message: {
+          delta: {
             role: "assistant",
             content: "Paris",
           },
@@ -185,14 +188,21 @@ describe('OpenAI Client', () => {
           total_tokens: 0
         }
       });
+
       completionStream.end();
+      completionCreateMock.mockResolvedValue(completionStream);
+      const completionPromise = client.getChatCompletionEvents(messages);
+
       const result = await completionPromise.next();
       expect(result.value).toEqual({
         choices: [{
           message: {
             role: "assistant",
             content: "Paris",
-            functionCall: undefined,
+            functionCall: {
+              arguments: "",
+              name: "",
+            },
             toolCalls: [],
           },
           finishReason: "stop"
@@ -208,6 +218,9 @@ describe('OpenAI Client', () => {
         model: clientOptions.model,
         stream: true,
       });
+
     });
+
+
   })
 });
