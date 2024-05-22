@@ -61,9 +61,10 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     splitChunkSize: MaxTokens[model],
     splitChunkOverlap: (MaxTokens[model] ?? 0) / 2,
   });
-
+  // add here indexing with the original document
   const snsClient = new SNSClient({ region: REGION });
-  for (const page of extractedText.pages) {
+  for (let i = 0; i < extractedText.pages.length; i++) {
+    const page = extractedText.pages[i];
     const chunks = await tokenizer.splitDocument(page.text, originalDocument);
     for (const chunk of chunks) {
       await snsClient.send(
@@ -74,4 +75,16 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
       );
     }
   }
+  // Deprecate this:
+  // for (const page of extractedText.pages) {
+  //   const chunks = await tokenizer.splitDocument(page.text, originalDocument);
+  //   for (const chunk of chunks) {
+  //     await snsClient.send(
+  //       new PublishCommand({
+  //         TopicArn: TEXT_EMBED_TOPIC_ARN,
+  //         Message: JSON.stringify(chunk),
+  //       })
+  //     );
+  //   }
+  // }
 };
