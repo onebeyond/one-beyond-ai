@@ -47,6 +47,30 @@ export class OpenAIClient implements AIClient {
     };
   }
 
+  // write async generator function for stream
+  public async *getChatCompletionEvents(messages: ChatRequestMessage[], options?: ChatCompletionOptions): AsyncGenerator<ChatCompletion, void, void> {
+    const stream = await this.client.chat.completions.create({
+      ...mapChatCompletionOptions(options),
+      messages: mapChatRequestMessages(messages),
+      model: this.options.model,
+      stream: true,
+    });
+
+    for await (const event of stream) {
+      yield {
+        choices: event.choices.map((choice) => ({
+          message: mapCompletionResponseMessage(choice.delta),
+          finishReason: choice.finish_reason
+        })),
+        usage: {
+          completionTokens: 0,
+          promptTokens: 0,
+          totalTokens: 0
+        },
+      }
+    }
+  }
+
   public async getEmbeddings(input: string[], options?: EmbeddingOptions): Promise<Embedding> {
     const result = await this.client.embeddings.create({
       ...options,

@@ -1,4 +1,5 @@
-import { AzureKeyCredential, ChatCompletions, Embeddings, OpenAIClient as openAIClient } from "@azure/openai";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AzureKeyCredential, ChatCompletions, Embeddings, OpenAIClient as openAIClient, EventStream } from "@azure/openai";
 import { AzureOpenAIClient } from "./azure-openai";
 import { AzureOpenAIClientParams, ChatRequestMessage } from "@one-beyond-ai/common";
 import { MockedClass } from "vitest";
@@ -128,6 +129,51 @@ describe('Azure OpenAI Client', () => {
         text: "Hello",
       });
       expect(OpenAIClient.prototype.getAudioTranscription).toHaveBeenCalledWith(clientOptions.deploymentName, expect.any(Uint8Array), "json", undefined);
+    });
+  });
+
+  describe("getChatCompletionEvents", () => {
+    it("should call azure openai client streamChatCompletions", async () => {
+      const spy = vi.spyOn(OpenAIClient.prototype, 'streamChatCompletions');
+      spy.mockResolvedValue([{
+        choices: [{
+          message: {
+            role: "assistant",
+            content: "Paris",
+          },
+          finishReason: "stop"
+        }],
+        usage: {
+          completionTokens: 0,
+          promptTokens: 0,
+          totalTokens: 0
+        }
+      }] as unknown as EventStream<ChatCompletions>);
+      const client = new AzureOpenAIClient(clientOptions);
+      const messages: ChatRequestMessage[] = [
+        {
+          role: "user",
+          content: 'What is the capital of France?',
+        }
+      ];
+      const result = client.getChatCompletionEvents(messages);
+      const event = await result.next();
+      expect(event.value).toEqual({
+        choices: [{
+          message: {
+            role: "assistant",
+            content: "Paris",
+            toolCalls: [],
+          },
+          finishReason: "stop"
+        }],
+        usage: {
+          completionTokens: 0,
+          promptTokens: 0,
+          totalTokens: 0
+        }
+      });
+      expect(OpenAIClient.prototype.streamChatCompletions).toHaveBeenCalledWith(clientOptions.deploymentName, messages, undefined);
     });
   });
 });
