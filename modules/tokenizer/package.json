@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/tokenizer",
-  "version": "0.1.50",
+  "version": "0.1.52",
   "dependencies": {
     "js-tiktoken": "^1.0.10",
     "langchain": "^0.1.30",
