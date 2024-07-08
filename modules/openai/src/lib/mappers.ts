@@ -4,104 +4,114 @@ import {
   ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionSystemMessageParam,
-  ChatCompletionChunk
-} from "openai/src/resources/chat/completions";
+  ChatCompletionChunk,
+} from 'openai/src/resources/chat/completions';
 import {
   AudioTranscriptionResultVerboseJson,
   ChatCompletionOptions,
-  ChatRequestAssistantMessage, ChatRequestFunctionMessage,
+  ChatRequestAssistantMessage,
+  ChatRequestFunctionMessage,
   ChatRequestMessage,
-  ChatRequestSystemMessage, ChatRequestToolMessage,
-  ChatRequestUserMessage, ChatResponseMessage, ChatRole, ChatRoles, CompletionUsage, EmbeddingUsage,
+  ChatRequestSystemMessage,
+  ChatRequestToolMessage,
+  ChatRequestUserMessage,
+  ChatResponseMessage,
+  ChatRole,
+  ChatRoles,
+  CompletionUsage,
+  EmbeddingUsage,
   FunctionCall,
-  FunctionType
-} from "@one-beyond-ai/common";
+  FunctionType,
+} from '@one-beyond-ai/common';
 
-import { CompletionUsage as OpenAICompletionUsage } from "openai/src/resources/completions";
-import { CreateEmbeddingResponse } from "openai/src/resources/embeddings";
-import { ChatCompletionMessageToolCall } from "openai/resources";
-
+import { CompletionUsage as OpenAICompletionUsage } from 'openai/src/resources/completions';
+import { CreateEmbeddingResponse } from 'openai/src/resources/embeddings';
+import { ChatCompletionMessageToolCall } from 'openai/resources';
 
 export const mapChatRequestSystemMessage = (message: ChatRequestSystemMessage): ChatCompletionSystemMessageParam => {
   return {
-    role: "system",
+    role: 'system',
     content: message.content,
     name: message.name,
   };
-}
+};
 
 export const mapChatRequestUserMessage = (message: ChatRequestUserMessage): ChatCompletionMessageParam => {
   return {
-    role: "user",
+    role: 'user',
     content: message.content,
     name: message.name,
   };
-}
+};
 
 export const mapChatRequestAssistantMessage = (message: ChatRequestAssistantMessage): ChatCompletionMessageParam => {
   return {
-    role: "assistant",
+    role: 'assistant',
     content: message.content,
     name: message.name,
     function_call: message?.functionCall,
     tool_calls: message?.toolCalls,
   };
-}
+};
 
 export const mapChatRequestFunctionMessage = (message: ChatRequestFunctionMessage): ChatCompletionMessageParam => {
   return {
-    role: "function",
+    role: 'function',
     content: message.content,
     name: message.name,
   };
-}
+};
 
 export const mapChatRequestToolMessage = (message: ChatRequestToolMessage): ChatCompletionMessageParam => {
   return {
-    role: "tool",
+    role: 'tool',
     content: message.content,
     tool_call_id: message.toolCallId,
   };
-}
+};
 
 export const mapChatRequestMessages = (messages: ChatRequestMessage[]): ChatCompletionMessageParam[] => {
   return messages.map((message) => {
     switch (message.role) {
-      case "system":
+      case 'system':
         return mapChatRequestSystemMessage(message);
-      case "user":
+      case 'user':
         return mapChatRequestUserMessage(message);
-      case "assistant":
+      case 'assistant':
         return mapChatRequestAssistantMessage(message);
-      case "function":
+      case 'function':
         return mapChatRequestFunctionMessage(message);
-      case "tool":
+      case 'tool':
         return mapChatRequestToolMessage(message);
     }
   });
-}
+};
 
 export const mapUsage = (usage?: OpenAICompletionUsage): CompletionUsage => {
   return {
     completionTokens: usage?.completion_tokens ?? 0,
     promptTokens: usage?.prompt_tokens ?? 0,
-    totalTokens: usage?.total_tokens ?? 0
+    totalTokens: usage?.total_tokens ?? 0,
   };
-}
+};
 
 export const mapRole = (role?: string): ChatRole => {
   if (ChatRoles.includes(role as ChatRole)) return role as ChatRole;
-  return "assistant";
-}
+  return 'assistant';
+};
 
-export const mapFunctionCall = (functionCall?: ChatCompletionChunk.Choice.Delta.FunctionCall | ChatCompletionMessage["function_call"]): ChatResponseMessage["functionCall"]  => {
+export const mapFunctionCall = (
+  functionCall?: ChatCompletionChunk.Choice.Delta.FunctionCall | ChatCompletionMessage['function_call']
+): ChatResponseMessage['functionCall'] => {
   return {
-    name: functionCall?.name || "",
-    arguments: functionCall?.arguments || "",
-  }
-}
+    name: functionCall?.name || '',
+    arguments: functionCall?.arguments || '',
+  };
+};
 
-export const mapCompletionResponseMessage = (message?: ChatCompletionMessage | ChatCompletionChunk.Choice.Delta): ChatResponseMessage | undefined => {
+export const mapCompletionResponseMessage = (
+  message?: ChatCompletionMessage | ChatCompletionChunk.Choice.Delta
+): ChatResponseMessage | undefined => {
   if (!message) {
     return undefined;
   }
@@ -109,22 +119,26 @@ export const mapCompletionResponseMessage = (message?: ChatCompletionMessage | C
     role: mapRole(message.role),
     content: message?.content || null,
     functionCall: mapFunctionCall(message?.function_call),
-    toolCalls: (message?.tool_calls ?? []).map((toolCall: ChatCompletionMessageToolCall |ChatCompletionChunk.Choice.Delta.ToolCall) => ({
-      id: toolCall?.id || "",
-      type: FunctionType.FUNCTION,
-      function: mapFunctionCall(toolCall.function) as FunctionCall,
-    })),
+    toolCalls: (message?.tool_calls ?? []).map(
+      (toolCall: ChatCompletionMessageToolCall | ChatCompletionChunk.Choice.Delta.ToolCall) => ({
+        id: toolCall?.id || '',
+        type: FunctionType.FUNCTION,
+        function: mapFunctionCall(toolCall.function) as FunctionCall,
+      })
+    ),
   };
-}
+};
 
 export const mapEmbeddingUsage = (usage: CreateEmbeddingResponse.Usage): EmbeddingUsage => {
   return {
     promptTokens: usage.prompt_tokens,
     totalTokens: usage.total_tokens,
-  }
-}
+  };
+};
 
-export const mapResponseFormat = (responseFormat?: ChatCompletionOptions["responseFormat"]): ChatCompletionCreateParams.ResponseFormat | undefined => {
+export const mapResponseFormat = (
+  responseFormat?: ChatCompletionOptions['responseFormat']
+): ChatCompletionCreateParams.ResponseFormat | undefined => {
   switch (responseFormat) {
     case 'json':
       return { type: 'json_object' };
@@ -132,9 +146,11 @@ export const mapResponseFormat = (responseFormat?: ChatCompletionOptions["respon
       return { type: 'text' };
   }
   return undefined;
-}
+};
 
-export const mapChatCompletionOptions = (options?: ChatCompletionOptions): Omit<ChatCompletionCreateParams, "messages" | "model"> | undefined => {
+export const mapChatCompletionOptions = (
+  options?: ChatCompletionOptions
+): Omit<ChatCompletionCreateParams, 'messages' | 'model'> | undefined => {
   if (!options) return;
   return {
     functions: options.functions,
@@ -153,8 +169,8 @@ export const mapChatCompletionOptions = (options?: ChatCompletionOptions): Omit<
     tools: options.tools,
     user: options.user,
     seed: options.seed,
-  }
-}
+  };
+};
 
 export const mapAudioTranscriptionResultVerboseJson = (response: any): AudioTranscriptionResultVerboseJson => {
   return {
@@ -174,7 +190,7 @@ export const mapAudioTranscriptionResultVerboseJson = (response: any): AudioTran
         noSpeechProb: segment.no_speech_prob,
         tokens: segment.tokens,
         seek: segment.seek,
-      }
+      };
     }),
-  }
-}
+  };
+};
