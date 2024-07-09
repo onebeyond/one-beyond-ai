@@ -15,7 +15,7 @@
       }
     },
     "publish": {
-      "command": "node tools/scripts/publish.mjs azure-openai {args.ver} {args.tag}",
+      "command": "node tools/scripts/publish.mjs azure-openai {args.ver} {args.tag} {args.otp}",
       "dependsOn": ["build"]
     },
     "install": {

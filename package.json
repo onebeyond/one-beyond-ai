@@ -6,7 +6,6 @@
   "private": true,
   "devDependencies": {
     "@azure/openai": "^1.0.0-beta.11",
-    "openai": "^4.29.2",
     "@nx/eslint": "18.0.4",
     "@nx/eslint-plugin": "18.0.4",
     "@nx/js": "^18.0.4",
@@ -23,18 +22,19 @@
     "@vitest/ui": "^1.0.4",
     "eslint": "~8.48.0",
     "eslint-config-prettier": "^9.0.0",
+    "js-tiktoken": "^1.0.10",
+    "langchain": "^0.1.30",
+    "mammoth": "^1.7.0",
     "nx": "18.0.4",
+    "openai": "^4.29.2",
+    "pdf-parse": "^1.1.1",
     "prettier": "^2.6.2",
     "ts-node": "10.9.1",
     "typescript": "~5.3.2",
     "verdaccio": "^5.0.4",
     "vite": "~5.0.0",
     "vite-plugin-dts": "~2.3.0",
-    "vitest": "^1.0.4",
-    "mammoth": "^1.7.0",
-    "pdf-parse": "^1.1.1",
-    "js-tiktoken": "^1.0.10",
-    "langchain": "^0.1.30"
+    "vitest": "^1.0.4"
   },
   "dependencies": {
     "tslib": "^2.3.0"

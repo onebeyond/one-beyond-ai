@@ -64,6 +64,21 @@ It will show tasks that you can run with Nx.
 - [Follow us on Twitter](https://twitter.com/nxdevtools)
 
 ## Create new module
+
 ```bash
 nx g @nx/js:lib common --buildable=true --publishable=true --importPath=@one-beyond-ai/common
 ```
+
+## Build all modules
+
+```bash
+npx nx run-many -t build
+```
+
+## Publish all modules
+
+```bash
+npx nx run-many -t publish --ver=0.1.54 --tag=latest --otp=425437
+```
+
+otp is optinal if you have 2FA enabled on your NPM account.
