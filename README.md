@@ -78,7 +78,7 @@ npx nx run-many -t build
 ## Publish all modules
 
 ```bash
-npx nx run-many -t publish --ver=0.1.54 --tag=latest --otp=425437
+npx nx run-many -t publish --ver=0.1.53 --tag=latest --otp=425437
 ```
 
 otp is optinal if you have 2FA enabled on your NPM account.

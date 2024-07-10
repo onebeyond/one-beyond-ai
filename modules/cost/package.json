@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/cost",
-  "version": "0.1.54",
+  "version": "0.1.55",
   "dependencies": {
     "@one-beyond-ai/common": "*"
   },
