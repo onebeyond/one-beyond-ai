@@ -1,6 +1,6 @@
 {
   "name": "@one-beyond-ai/openai",
-  "version": "0.1.55",
+  "version": "0.1.56",
   "dependencies": {
     "openai": "^4.29.2",
     "@one-beyond-ai/common": "*"
